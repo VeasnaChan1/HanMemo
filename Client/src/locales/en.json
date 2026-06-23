@@ -1,0 +1,36 @@
+{
+  "common": {
+    "continue": "Continue",
+    "logout": "Log out",
+    "login": "Login",
+    "getStarted": "Get Started"
+  },
+  "nav": {
+    "home": "Home",
+    "lesson": "Lesson",
+    "review": "Review",
+    "profile": "Profile"
+  },
+  "landing": {
+    "heroTitle": "Finally remember the Chinese you study",
+    "heroSubtitle": "HanMemo uses spaced repetition science to make sure you never forget a word again. Structured language paths to maintain healthy daily study habits.",
+    "smartReviewTitle": "Smart Review",
+    "smartReviewDesc": "Never forget words",
+    "dailyStreaksTitle": "Daily streaks",
+    "dailyStreaksDesc": "Built habits",
+    "languagesTitle": "Khmer & English",
+    "languagesDesc": "Your language"
+  },
+  "dashboard": {
+    "greeting": "Good morning",
+    "streak": "day {{count}} streak",
+    "todaysReview": "Today's Review",
+    "wordsDue": "words due today",
+    "startReview": "Start Review",
+    "weeklyStreak": "7-day streak",
+    "quickStates": "Quick States",
+    "wordsLearned": "Words learned",
+    "retention": "Retention",
+    "lessonProgress": "Lesson Progress"
+  }
+}

@@ -1,21 +1,53 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../components/common/Button";
+import Loader from "../components/common/Loader";
+import StreakBadge from "../components/common/StreakBadge";
+import { RefreshCw, Check, ArrowRight } from "lucide-react";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [loading, setLoading] = useState(true);
 
-  // Mock metric counters mirroring your exact figma layout details
+  // Simulated content initial fetch mapping setup to demonstrate Loader integration
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 600); // Quick state transition smooth render
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Mock metric counters mirroring your backend database entities and figma layout details
   const dashboardStats = {
     dueReviews: 14,
     streakCount: 7,
     wordsLearned: 48,
     retentionRate: "76%",
     currentLesson: "HSK1 - Lesson 3 - Family",
+    completedItems: 12, // User completed items
+    totalItems: 15, // Total items in current lesson path
   };
 
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
+
+  // Compute progress bar percentage safely, managing boundary conditions
+  const progressPercentage =
+    dashboardStats.totalItems > 0
+      ? Math.min(
+          Math.max(
+            (dashboardStats.completedItems / dashboardStats.totalItems) * 100,
+            0,
+          ),
+          100,
+        )
+      : 0;
+
+  // Render full screen loader if tracking states haven't updated yet
+  if (loading) {
+    return <Loader fullScreen={true} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col text-left">
@@ -37,7 +69,7 @@ const DashboardPage = () => {
             </span>
             <span
               className="hover:text-[#E8453C] transition-colors cursor-pointer"
-              onClick={() => navigate("/reviews")}
+              onClick={() => navigate("/reviews/session")}
             >
               Review
             </span>
@@ -65,9 +97,8 @@ const DashboardPage = () => {
             <h1 className="text-2xl font-bold text-[#1A1A2E]">
               Good morning, {user?.name || "Eychhean"}
             </h1>
-            <p className="text-sm font-semibold text-[#E8453C] flex items-center gap-1.5">
-              🔥 day {dashboardStats.streakCount} streak
-            </p>
+            {/* Integrated your completed custom reusable common StreakBadge component */}
+            <StreakBadge count={dashboardStats.streakCount} />
           </div>
           {/* User Rounded Avatar Icon */}
           <div className="w-12 h-12 rounded-full bg-[#E8453C] flex items-center justify-center text-white font-bold text-lg shadow-sm">
@@ -80,7 +111,7 @@ const DashboardPage = () => {
           {/* LEFT: TODAY'S SRS FLASHCARD REVIEW INTERFACE PANEL */}
           <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl flex flex-col justify-between shadow-sm">
             <div className="flex items-center gap-2 text-sm font-bold text-[#1A1A2E] mb-4">
-              <span className="text-base">🔄</span> Today's Review
+              <RefreshCw size={16} className="text-[#E8453C]" /> Today's Review
             </div>
 
             <div className="text-center my-6 flex flex-col items-center">
@@ -95,8 +126,9 @@ const DashboardPage = () => {
             <Button
               variant="primary"
               onClick={() => navigate("/reviews/session")}
+              className="flex items-center justify-center gap-2"
             >
-              Start Review →
+              Start Review <ArrowRight size={16} />
             </Button>
           </div>
 
@@ -115,10 +147,10 @@ const DashboardPage = () => {
                     </span>
                     {/* Highlighted active consecutive daily target tracking days */}
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
+                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all
                       ${idx < 6 ? "bg-[#E8453C] text-white" : "bg-gray-100 text-[#9B9BB4]"}`}
                     >
-                      ✓
+                      <Check size={14} strokeWidth={3} />
                     </div>
                   </div>
                 ))}
@@ -154,30 +186,36 @@ const DashboardPage = () => {
 
         {/* BOTTOM: LESSON PROGRESS TIMELINE CONTINUATION BAR */}
         <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl shadow-sm flex flex-col gap-4">
-          <div>
-            <h3 className="text-sm font-bold text-[#1A1A2E] mb-0.5">
-              7-day streak
-            </h3>
-            <p className="text-xs text-[#9B9BB4] font-medium">
-              {dashboardStats.currentLesson}
-            </p>
+          <div className="flex justify-between items-end">
+            <div>
+              <h3 className="text-sm font-bold text-[#1A1A2E] mb-0.5">
+                Lesson Progress
+              </h3>
+              <p className="text-xs text-[#9B9BB4] font-medium">
+                {dashboardStats.currentLesson}
+              </p>
+            </div>
+            {/* Numeric visual label for user completions */}
+            <span className="text-xs font-bold text-[#4A4A6A]">
+              {dashboardStats.completedItems} / {dashboardStats.totalItems}
+            </span>
           </div>
 
-          {/* Progress Loading Track */}
+          {/* Dynamic computed progress bar track */}
           <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
             <div
-              className="bg-[#E8453C] h-full rounded-full transition-all duration-500"
-              style={{ width: "65%" }}
+              className="bg-[#E8453C] h-full rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
-          <div className="max-w-[140px] mt-1">
+          <div className="max-w-35 mt-1">
             <Button
               variant="outline"
               className="py-2 text-sm text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
               onClick={() => navigate("/lessons/study")}
             >
-              Continoue
+              Continue
             </Button>
           </div>
         </div>

@@ -1,8 +1,8 @@
-import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+/* ProtectedRoute component */
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
-const ProtectedRoute = ({ allowRoles = ["learner", "admin"] }) => {
+const ProtectedRoute = ({ children, allowRoles = ["learner", "admin"] }) => {
   const { token, user } = useAuth();
 
   if (!token) {
@@ -14,7 +14,7 @@ const ProtectedRoute = ({ allowRoles = ["learner", "admin"] }) => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
 export default ProtectedRoute;

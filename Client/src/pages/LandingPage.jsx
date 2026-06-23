@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import Button from "../components/common/Button";
+import { Brain, Flame, Globe } from "lucide-react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -28,14 +29,14 @@ const LandingPage = () => {
           <div className="flex items-center gap-4 max-w-xs">
             <Button
               variant="primary"
-              className="w-auto min-w-[120px] py-2 px-5 text-sm"
+              className="w-auto min-w-30 py-2 px-5 text-sm"
               onClick={handleGetStarted}
             >
-              Get Start
+              Get Started
             </Button>
             <Button
               variant="outline"
-              className="w-auto min-w-[120px] py-2 px-5 text-sm"
+              className="w-auto min-w-30 py-2 px-5 text-sm"
               onClick={() => navigate("/login")}
             >
               Login
@@ -45,7 +46,7 @@ const LandingPage = () => {
       </header>
 
       {/* 2. HERO CONTENT SECTION */}
-      <main className="flex-grow max-w-6xl w-full mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-12">
+      <main className="grow max-w-6xl w-full mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-12">
         {/* Left Typography Block */}
         <div className="flex-1 flex flex-col gap-4">
           <h1 className="text-4xl md:text-5xl font-bold text-[#1A1A2E] leading-tight">
@@ -58,7 +59,7 @@ const LandingPage = () => {
           </p>
           <div className="max-w-xs mt-4">
             <Button variant="primary" onClick={handleGetStarted}>
-              Get Start
+              Get Started
             </Button>
           </div>
         </div>
@@ -69,7 +70,7 @@ const LandingPage = () => {
             <img
               src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=800"
               alt="Learning Chinese Interface Mockup"
-              className="rounded-xl max-w-full h-auto object-cover md:max-h-[350px]"
+              className="rounded-xl max-w-full h-auto object-cover md:max-h-87.5"
             />
           </div>
         </div>
@@ -80,19 +81,19 @@ const LandingPage = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Smart Review */}
           <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl flex flex-col items-center text-center shadow-sm">
-            <div className="w-12 h-12 bg-[#FFF0EF] text-[#E8453C] rounded-full flex items-center justify-center text-2xl mb-4">
-              🧠
+            <div className="w-12 h-12 bg-[#FFF0EF] text-[#E8453C] rounded-full flex items-center justify-center mb-4">
+              <Brain size={24} />
             </div>
             <h3 className="font-bold text-lg text-[#1A1A2E] mb-1">
               Smart Review
             </h3>
-            <p className="text-sm text-[#4A4A6A]">Never forgot words</p>
+            <p className="text-sm text-[#4A4A6A]">Never forget words</p>
           </div>
 
           {/* Card 2: Daily Streaks */}
           <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl flex flex-col items-center text-center shadow-sm">
-            <div className="w-12 h-12 bg-[#FFF0EF] text-[#E8453C] rounded-full flex items-center justify-center text-2xl mb-4">
-              🔥
+            <div className="w-12 h-12 bg-[#FFF0EF] text-[#E8453C] rounded-full flex items-center justify-center mb-4">
+              <Flame size={24} fill="currentColor" />
             </div>
             <h3 className="font-bold text-lg text-[#1A1A2E] mb-1">
               Daily streaks
@@ -102,8 +103,8 @@ const LandingPage = () => {
 
           {/* Card 3: Khmer & English */}
           <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl flex flex-col items-center text-center shadow-sm">
-            <div className="w-12 h-12 bg-[#FFF0EF] text-[#E8453C] rounded-full flex items-center justify-center text-2xl mb-4">
-              🌐
+            <div className="w-12 h-12 bg-[#FFF0EF] text-[#E8453C] rounded-full flex items-center justify-center mb-4">
+              <Globe size={24} />
             </div>
             <h3 className="font-bold text-lg text-[#1A1A2E] mb-1">
               Khmer & English
