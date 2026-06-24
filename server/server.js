@@ -1,21 +1,24 @@
-import 'dotenv/config';
+// src/app.js
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
-import authRoutes from './routes/authRoutes.js';
-import lessonRoutes from './routes/lessonRoutes.js';
-import reviewRoutes from './routes/reviewRoutes.js';
-import errorHandler from './middlewares/errorHandler.js';
+// Load environment variables from your .env file
+dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/lessons', lessonRoutes);
-app.use('/api/reviews', reviewRoutes);
+// Middleware
+app.use(cors()); // Allows your React frontend to talk to this server
+app.use(express.json()); // Allows your server to understand JSON data
 
-app.use(errorHandler);
+// A simple test route
+app.get('/', (req, res) => {
+  res.json({ message: "Welcome to the HanMemo API (ES Modules enabled)!" });
+});
 
+// Set the port and start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});

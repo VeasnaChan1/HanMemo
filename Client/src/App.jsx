@@ -23,6 +23,7 @@ import QuizPage from "./pages/QuizPage";
 import ReviewSessionPage from "./pages/ReviewSessionPage";
 import ProfilePage from "./pages/ProfilePage";
 
+
 const App = () => {
   return (
     <Router>
