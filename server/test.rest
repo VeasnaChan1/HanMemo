@@ -1,0 +1,66 @@
+# Set your base URL as a variable so you don't have to retype it
+@baseUrl = http://localhost:5000/api
+
+### ==========================================
+### AUTHENTICATION TESTS
+### ==========================================
+
+### 1. Register a new user (Happy Path)
+# Expected outcome: 201 Created. Returns a success message, the user object, and a JWT token.
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Veasna Tester",
+  "email": "veasna@hanmemo.com",
+  "password": "securepassword123"
+}
+
+###
+
+### 2. Register duplicate user (Error Path)
+# Expected outcome: 400 Bad Request. Should fail because the email is already in the database.
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Veasna Tester Two",
+  "email": "veasna@hanmemo.com",
+  "password": "adifferentpassword"
+}
+
+###
+
+### 3. Login with correct credentials (Happy Path)
+# Expected outcome: 200 OK. Returns a success message, user info, and a JWT token.
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "veasna@hanmemo.com",
+  "password": "securepassword123"
+}
+
+###
+
+### 4. Login with wrong password (Error Path)
+# Expected outcome: 400 Bad Request. "Invalid credentials."
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "veasna@hanmemo.com",
+  "password": "wrongpassword!"
+}
+
+###
+
+### 5. Login with non-existent email (Error Path)
+# Expected outcome: 404 Not Found. "User not found."
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "nobody@hanmemo.com",
+  "password": "securepassword123"
+}

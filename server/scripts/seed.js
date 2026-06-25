@@ -1,98 +1,51 @@
-// server/scripts/seed.js
-
+import fs from 'fs/promises';
 import path from 'path';
-require('dotenv').config({ 
-  path: path.join(__dirname, '../.env') 
-});
+import { fileURLToPath } from 'url';
+import sequelize from '../config/db.js';
+import { User, Deck, Lesson, Vocabulary } from '../models/index.js';
 
-const fs   = require('fs');
-const db   = require('../config/db');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const WORDS_PER_LESSON = 8;
+const seedDatabase = async () => {
+  try {
+    // 1. Sync database (reset tables)
+    await sequelize.sync({ force: true });
+    console.log("Database synced and cleared!");
 
-async function seed() {
-  // Load your complete ChatGPT-generated file
-  const words = JSON.parse(
-    fs.readFileSync(
-      path.join(__dirname, '../data/hsk1.json'),
-      'utf8'
-    )
-  );
+    // 2. Create a test user
+    const user = await User.create({
+      name: 'Test Learner',
+      email: 'test@hanmemo.com',
+      password_hash: '$2b$10$YourHashedPasswordHere', // Dummy hash for testing
+      role: 'learner'
+    });
 
-  console.log(` Seeding ${words.length} HSK 1 words...`);
+    // 3. Create a deck and lesson
+    const deck = await Deck.create({ title: 'HSK 1', hsk_level: 1 });
+    const lesson = await Lesson.create({ deck_id: deck.id, title: 'Greetings', lesson_number: 1 });
 
-  // Create deck
-  const [deckRow] = await db.query(
-    `INSERT INTO decks (title, hsk_level, description)
-     VALUES (?, ?, ?)`,
-    ['HSK 1', 1, 'HSK 1 vocabulary for Cambodian learners']
-  );
-  const deckId = deckRow.insertId;
-  console.log(` Created deck id: ${deckId}`);
+    // 4. Read the JSON file and seed the Vocabulary table
+    const rawData = await fs.readFile(path.resolve(__dirname, '../data/hsk1.json'), 'utf-8');
+    const vocabList = JSON.parse(rawData);
 
-  // Create lessons
-  const totalLessons = Math.ceil(words.length / WORDS_PER_LESSON);
-  const lessonIds    = [];
+    // Add the missing required fields (deck_id, lesson_id, hsk_level) to each word
+    const vocabDataToInsert = vocabList.map(word => ({
+      ...word,
+      deck_id: deck.id,
+      lesson_id: lesson.id,
+      hsk_level: 1
+    }));
 
-  for (let i = 0; i < totalLessons; i++) {
-    // Get words for this lesson to generate a theme name
-    const lessonWords = words.slice(
-      i * WORDS_PER_LESSON,
-      (i + 1) * WORDS_PER_LESSON
-    );
+    // Use bulkCreate to insert the whole array at once (much faster!)
+    await Vocabulary.bulkCreate(vocabDataToInsert);
 
-    const [lessonRow] = await db.query(
-      `INSERT INTO lessons
-       (deck_id, title, lesson_number, is_unlocked_by_default)
-       VALUES (?, ?, ?, ?)`,
-      [
-        deckId,
-        `Lesson ${i + 1}`,
-        i + 1,
-        i === 0 ? 1 : 0
-      ]
-    );
-    lessonIds.push(lessonRow.insertId);
-    console.log(` Created lesson ${i + 1}`);
+    console.log(`Database seeded successfully! Added ${vocabDataToInsert.length} vocabulary words.`);
+  } catch (error) {
+    console.error("Seeding error:", error);
+  } finally {
+    process.exit();
   }
+};
 
-  // Insert vocabulary
-  for (let i = 0; i < words.length; i++) {
-    const word      = words[i];
-    const lessonIdx = Math.floor(i / WORDS_PER_LESSON);
-    const lessonId  = lessonIds[lessonIdx];
-
-    await db.query(
-      `INSERT INTO vocabulary
-       (deck_id, lesson_id, hanzi, pinyin,
-        definition_en, definition_km,
-        example_cn, example_pinyin,
-        example_en, example_km,
-        hsk_level)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        deckId,
-        lessonId,
-        word.hanzi,
-        word.pinyin,
-        word.definition_en,
-        word.definition_km,
-        word.example_cn,
-        word.example_pinyin,
-        word.example_en,
-        word.example_km,
-        1
-      ]
-    );
-
-    console.log(`  Inserted: ${word.hanzi}`);
-  }
-
-  console.log(`\n Done! ${words.length} words seeded.`);
-  process.exit(0);
-}
-
-seed().catch(err => {
-  console.error(' Seed failed:', err);
-  process.exit(1);
-});
+seedDatabase();

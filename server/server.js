@@ -3,6 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+// Import routes
+import authRoutes from './routes/authRoutes.js';
+
 // Load environment variables from your .env file
 dotenv.config();
 
@@ -11,6 +14,8 @@ const app = express();
 // Middleware
 app.use(cors()); // Allows your React frontend to talk to this server
 app.use(express.json()); // Allows your server to understand JSON data
+// Routes
+app.use('/api/auth', authRoutes);
 
 // A simple test route
 app.get('/', (req, res) => {
@@ -18,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 // Set the port and start the server
-const PORT = process.env.PORT || 5000;
+const PORT =5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

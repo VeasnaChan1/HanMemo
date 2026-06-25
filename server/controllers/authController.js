@@ -1,51 +1,74 @@
-import * as authService from '../services/authService.js';
-import * as userRepository from '../repositories/userRepository.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { User } from '../models/index.js';
 
-export const register = async (req, res, next) => {
+// --- REGISTER A NEW USER ---
+export const register = async (req, res) => {
   try {
-    const { name, email, password, hsk_level } = req.body;
+    const { name, email, password } = req.body;
 
-    const existing = await userRepository.findByEmail(email);
-    if (existing) {
-      return res.status(400).json({ message: 'Email already exists' });
+    // 1. Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists.' });
     }
 
-    const hashedPassword = await authService.hashPassword(password);
-    const newUser = await userRepository.create({ name, email, hashedPassword, hsk_level });
-    const token = authService.generateToken(newUser);
+    // 2. Hash the password securely
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash(password, salt);
 
-    res.status(201).json({ message: 'Account created', token });
-  } catch (err) {
-    next(err);
+    // 3. Save the new user to the database
+    const newUser = await User.create({
+      name,
+      email,
+      password_hash
+    });
+
+    // 4. Generate a JWT Token
+    const token = jwt.sign({ id: newUser.id, role: newUser.role }, process.env.JWT_SECRET, {
+      expiresIn: '7d' // Token expires in 7 days
+    });
+
+    res.status(201).json({
+      message: 'User registered successfully!',
+      token,
+      user: { id: newUser.id, name: newUser.name, email: newUser.email }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error during registration.', error: error.message });
   }
 };
 
-export const login = async (req, res, next) => {
+// --- LOGIN AN EXISTING USER ---
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await userRepository.findByEmail(email);
+    // 1. Find the user by email
+    const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(404).json({ message: 'User not found.' });
     }
 
-    const isMatch = await authService.comparePassword(password, user.password_hash);
+    // 2. Compare the provided password with the hashed password in the DB
+    const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid credentials.' });
     }
 
-    const token = authService.generateToken(user);
-    res.status(200).json({
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        hsk_level: user.hsk_level,
-        language: user.language
-      }
+    // 3. Generate a JWT Token
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
     });
-  } catch (err) {
-    next(err);
+
+    res.status(200).json({
+      message: 'Login successful!',
+      token,
+      user: { id: user.id, name: user.name, email: user.email }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error during login.', error: error.message });
   }
 };
