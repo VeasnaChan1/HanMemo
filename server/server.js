@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import lessonRoutes from './routes/lessonRoutes.js';
 
 // Load environment variables from your .env file
 dotenv.config();
@@ -16,6 +18,8 @@ app.use(cors()); // Allows your React frontend to talk to this server
 app.use(express.json()); // Allows your server to understand JSON data
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes); 
+app.use('/api/lessons', lessonRoutes);
 
 // A simple test route
 app.get('/', (req, res) => {

@@ -64,3 +64,52 @@ Content-Type: application/json
   "email": "nobody@hanmemo.com",
   "password": "securepassword123"
 }
+
+
+### Test 1: Login to get a token
+# Assuming you already registered a user named Veasna
+
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "password123"
+}
+
+###
+
+### Test 2: Fetch Profile (Replace YOUR_TOKEN_HERE with the token from Test 1)
+GET http://localhost:5000/api/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
+
+###
+
+### Test 3: Error Handling Test (Login with wrong password)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "veasna@hanmemo.com",
+    "password": "$2b$10$YourHashedPasswordHere"
+}
+
+
+
+### 1. Get All Lessons
+GET http://localhost:5000/api/lessons
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
+
+###
+
+### 2. Get Specific Lesson with Vocabulary (Assuming Lesson ID is 1)
+GET http://localhost:5000/api/lessons/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
+
+###
+
+### 3. Mark Lesson as Complete
+POST http://localhost:5000/api/lessons/1/complete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
+Content-Type: application/json
+
