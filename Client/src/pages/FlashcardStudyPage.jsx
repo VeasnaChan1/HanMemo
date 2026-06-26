@@ -61,7 +61,22 @@ const FlashcardStudyPage = () => {
   };
 
   const handleFinishStudy = () => {
-    // Route onward to interactive evaluation quiz for this lesson
+    // 1. Get existing items in the review queue or initialize an empty array
+    const existingQueue =
+      JSON.parse(localStorage.getItem("hanmemo_review_queue")) || [];
+
+    // 2. Prevent adding duplicates by checking if the item ID already exists
+    const updatedQueue = [...existingQueue];
+    mockLessonVocabulary.forEach((vocab) => {
+      if (!updatedQueue.some((item) => item.id === vocab.id)) {
+        updatedQueue.push(vocab);
+      }
+    });
+
+    // 3. Save back to localStorage to simulate pushing to the backend database
+    localStorage.setItem("hanmemo_review_queue", JSON.stringify(updatedQueue));
+
+    // 4. Route onward to the quiz or straight to reviews for testing
     navigate(`/lessons/${lessonId || "3"}/quiz`);
   };
 
