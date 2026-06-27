@@ -1,4 +1,5 @@
-import { Lesson, Vocabulary, UserLesson } from '../models/index.js';
+import { Lesson, Vocabulary, UserLesson, ReviewSession } from '../models/index.js';
+import { generateLessonQuiz } from '../services/quizService.js';
 
 // 1. Implement GET /api/lessons
 export const getAllLessons = async (req, res) => {
@@ -36,37 +37,64 @@ export const getLessonById = async (req, res) => {
     }
 };
 
-// 3. Start lesson completion logic (POST /api/lessons/:id/complete)
+// 3. GET /api/lessons/:id/quiz
+export const getLessonQuiz = async (req, res) => {
+    try {
+        const lessonId = req.params.id;
+        const quiz = await generateLessonQuiz(lessonId);
+        res.json({ quiz });
+    } catch (error) {
+        console.error("Quiz Generation Error:", error);
+        res.status(500).json({ error: "Failed to generate quiz." });
+    }
+};
+
+// 4. POST /api/lessons/:id/complete (Includes SRS Injection)
 export const completeLesson = async (req, res) => {
     try {
         const lessonId = req.params.id;
-        const userId = req.user.id; // Comes from authMiddleware
+        const userId = req.user.id; 
 
-        // Check if the lesson actually exists first
         const lesson = await Lesson.findByPk(lessonId);
         if (!lesson) {
             return res.status(404).json({ error: "Lesson not found." });
         }
 
-        // Find existing progress or create a new record
+        // 1. Mark lesson as complete
         const [userLesson, created] = await UserLesson.findOrCreate({
             where: { user_id: userId, lesson_id: lessonId },
-            defaults: {
-                is_unlocked: true,
-                is_completed: true,
-                completed_at: new Date()
-            }
+            defaults: { is_unlocked: true, is_completed: true, completed_at: new Date() }
         });
 
-        // If it already existed but wasn't completed, update it
         if (!created && !userLesson.is_completed) {
             userLesson.is_completed = true;
             userLesson.completed_at = new Date();
             await userLesson.save();
         }
 
+        // 2. >>> THE NEW SRS LOGIC <<<
+        // Fetch all vocabulary for this lesson
+        const vocabularies = await Vocabulary.findAll({ where: { lesson_id: lessonId } });
+
+        // Calculate tomorrow's date for the first review
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Inject each word into the review_sessions table
+        for (const vocab of vocabularies) {
+            await ReviewSession.findOrCreate({
+                where: { user_id: userId, vocab_id: vocab.id },
+                defaults: {
+                    ease_factor: 2.5,       // Default SM-2 starting ease
+                    interval_day: 1,        // Review again in 1 day
+                    repetitions: 0,
+                    next_review: tomorrow   // Due tomorrow
+                }
+            });
+        }
+
         res.json({ 
-            message: "Lesson marked as complete!", 
+            message: "Lesson complete! Vocabulary added to your review queue.", 
             userLesson 
         });
     } catch (error) {

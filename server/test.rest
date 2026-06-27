@@ -7,12 +7,21 @@
 
 ### 1. Register a new user (Happy Path)
 # Expected outcome: 201 Created. Returns a success message, the user object, and a JWT token.
+# POST {{baseUrl}}/auth/register
+# Content-Type: application/json
+
+# {
+#   "name": "Veasna Tester",
+#   "email": "veasna@hanmemo.com",
+#   "password": "securepassword123"
+# }
+
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "name": "Veasna Tester",
-  "email": "veasna@hanmemo.com",
+  "name": "Veasna1 Tester",
+  "email": "veasna1@hanmemo.com",
   "password": "securepassword123"
 }
 
@@ -113,3 +122,16 @@ POST http://localhost:5000/api/lessons/1/complete
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
 Content-Type: application/json
 
+### Test 1: Generate a Quiz for Lesson 1
+GET http://localhost:5000/api/lessons/1/quiz
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
+
+###
+
+### 2. Complete the Lesson (Triggering SRS)
+# REPLACE 'YOUR_JWT_TOKEN' with the actual token string from Test 1
+POST http://localhost:5000/api/lessons/1/complete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{}
