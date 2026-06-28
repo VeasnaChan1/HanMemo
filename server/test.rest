@@ -135,3 +135,65 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6I
 Content-Type: application/json
 
 {}
+
+
+### Test 1: Rate a card as "Good" (3)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{
+    "reviewSessionId": 1,
+    "rating": 3
+}
+
+### 0. Login to get token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@hanmemo.com",
+    "password": "yourpassword"
+}
+
+### --- THE SM-2 PROGRESSION TESTS --- ###
+
+### Scenario 1: First time seeing it -> User presses "Good" (3)
+# Expected outcome: Interval 1 day, Reps 1, Ease ~2.5
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 3 }
+
+### Scenario 2: Next day -> User presses "Good" (3) again
+# Expected outcome: Interval 6 days, Reps 2, Ease ~2.5
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 3 }
+
+### Scenario 3: 6 days later -> User presses "Easy" (4)
+# Expected outcome: Interval ~15 days (6 * 2.65), Reps 3, Ease increases to 2.65
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 4 }
+
+### Scenario 4: 15 days later -> User completely forgets it. Presses "Again" (1)
+# Expected outcome: Reps drop to 0, Interval drops to 1 day, Ease decreases heavily (~1.85)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 1 }
+
+### Scenario 5: User relearns it -> Presses "Hard" (2)
+# Expected outcome: Reps 1, Interval 1 day (because reps was 0), Ease decreases slightly (~1.7)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 2 }

@@ -1,56 +1,60 @@
 /**
- * Spaced Repetition System (SRS) Engine utilizing an optimized SM-2 Algorithm variant.
- * * @param {Object} vocabularySession - The current user-vocabulary tracking state record
- * @param {number} quality - Feedback score given by user (1: Again, 2: Hard, 3: Good, 4: Easy)
- * @returns {Object} Updated interval variables { repetitions, easeFactor, intervalDays }
+ * SM-2 Spaced Repetition Algorithm
+ * Calculates next review date and updates learning parameters
+ * * @param {Object} currentSession - { repetitions, easeFactor, intervalDays }
+ * @param {number} quality - User's rating (1=Again, 2=Hard, 3=Good, 4=Easy)
+ * @returns {Object} { repetitions, easeFactor, intervalDays, next_review }
  */
-const calculateNextReview = (vocabularySession, quality) => {
-  // Extract or default baseline matrix variables
-  let repetitions = vocabularySession?.repetitions || 0;
-  let easeFactor = vocabularySession?.easeFactor || 2.5; // Default standard baseline multiplier
-  let intervalDays = 1;
+export const calculateNextReview = (currentSession, quality) => {
+  // Initialize or extract current values
+  let repetitions = currentSession?.repetitions || 0;
+  let easeFactor = currentSession?.easeFactor || 2.5;
+  let intervalDays = currentSession?.intervalDays || 1;
 
-  // Evaluation Rule: If the user forgets the word ('Again'), drop the streak loops completely
-  if (quality === 1) {
+  // Step 1: Check if user forgot (quality < 3)
+  // Ratings 1 (Again) and 2 (Hard) both require reset
+  if (quality < 3) {
+    // Reset back to beginning
     repetitions = 0;
     intervalDays = 1;
+    // Decrease ease factor because user struggled
+    easeFactor = easeFactor - 0.2;
   } else {
-    // Increment valid consecutive successful repetitions
+    // User remembered (quality 3 or 4) — advance them
     repetitions += 1;
 
+    // Calculate new interval based on repetition count
     if (repetitions === 1) {
-      intervalDays = 1; // Unlocked breakthrough step 1: 1 day gap
+      intervalDays = 1;  // First review: 1 day
     } else if (repetitions === 2) {
-      intervalDays = 4; // Step 2: 4 days gap
+      intervalDays = 6;  // Second review: 6 days (SM-2 standard!)
     } else {
-      // Step 3+: Scale exponentially using the item's calculated Ease Factor
-      intervalDays = Math.ceil(
-        (vocabularySession?.intervalDays || 1) * easeFactor,
-      );
+      // Third+ review: multiply by ease factor
+      intervalDays = Math.ceil(intervalDays * easeFactor);
     }
 
-    // Dynamic adjustment of EF based on user feedback difficulty
-    // Mapping qualities to traditional SM-2 metrics adjustments:
-    // (quality - 1) shifts standard scales from [1-4] values into standard math multipliers
-    const qualityScoreMap = { 2: 3, 3: 4, 4: 5 }; // Normalizes 4-button layout scale to SM-2 quality metrics [0-5]
-    const sm2Quality = qualityScoreMap[quality] || 3;
-
-    easeFactor =
-      easeFactor + (0.1 - (5 - sm2Quality) * (0.08 + (5 - sm2Quality) * 0.02));
+    // Adjust ease factor based on quality feedback
+    // Convert 1-4 scale to SM-2's 0-5 scale
+    // 1→0 (Again), 2→1 (Hard), 3→3 (Good), 4→5 (Easy)
+    const sm2Quality = quality === 1 ? 0 : quality === 2 ? 1 : quality === 3 ? 3 : 5;
+    
+    easeFactor = easeFactor + (0.1 - (5 - sm2Quality) * (0.08 + (5 - sm2Quality) * 0.02));
   }
 
-  // Enforce a hard lower boundary constraint threshold limit for the EF variable
+  // Enforce minimum ease factor
   if (easeFactor < 1.3) {
     easeFactor = 1.3;
   }
+
+  // Calculate next review date
+  const today = new Date();
+  const nextReviewDate = new Date(today);
+  nextReviewDate.setDate(nextReviewDate.getDate() + intervalDays);
 
   return {
     repetitions,
     easeFactor: parseFloat(easeFactor.toFixed(2)),
     intervalDays,
+    next_review: nextReviewDate.toISOString().split('T')[0]  // YYYY-MM-DD format
   };
-};
-
-module.exports = {
-  calculateNextReview,
 };
