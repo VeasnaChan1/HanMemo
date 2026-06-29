@@ -1,100 +1,52 @@
-const { Vocabulary, UserLesson, Sequelize } = require("../models");
-const { calculateNextReview } = require("../services/srsService");
-const { Op } = Sequelize;
+import { ReviewSession } from '../models/index.js';
+import { calculateNextReview } from '../services/srsService.js';
 
-/**
- * Fetch all words due for review today or overdue based on user scheduling tables
- */
-const getDueReviews = async (req, res, next) => {
-  try {
-    const userId = req.user.id; // Populated securely via authMiddleware interceptor
-    const rightNow = new Date();
+// POST /api/reviews/rate
+export const rateReview = async (req, res) => {
+    try {
+        const { reviewSessionId, rating } = req.body;
+        const userId = req.user.id;
 
-    // Query for user item states where nextReviewDate <= current systemic datetime stamp
-    const dueCards = await UserLesson.findAll({
-      where: {
-        userId,
-        nextReviewDate: {
-          [Op.lte]: rightNow,
-        },
-      },
-      include: [{ model: Vocabulary, as: "vocabularyDetails" }],
-      order: [["nextReviewDate", "ASC"]],
-    });
+        // Validate input
+        if (![1, 2, 3, 4].includes(rating)) {
+            return res.status(400).json({ error: "Rating must be 1, 2, 3, or 4." });
+        }
 
-    return res.status(200).json({
-      success: true,
-      count: dueCards.length,
-      data: dueCards,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+        // Find the specific flashcard review session
+        const review = await ReviewSession.findOne({
+            where: { id: reviewSessionId, user_id: userId }
+        });
 
-/**
- * Handle score review rating events from user interactions
- */
-const rateCardSession = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const { vocabularyId, rating } = req.body; // collected from client payload mapping
+        if (!review) {
+            return res.status(404).json({ error: "Review session not found." });
+        }
 
-    if (!vocabularyId || !rating || rating < 1 || rating > 4) {
-      return res
-        .status(400)
-        .json({ message: "Invalid parameters or rating scale missing." });
+        // Package the current stats for your algorithm
+        const currentSession = {
+            repetitions: review.repetitions,
+            easeFactor: review.ease_factor,
+            intervalDays: review.interval_day
+        };
+
+        // Run your SM-2 logic
+        const srsData = calculateNextReview(currentSession, rating);
+
+        // Update the database record
+        review.ease_factor = srsData.easeFactor;
+        review.interval_day = srsData.intervalDays;
+        review.repetitions = srsData.repetitions;
+        review.next_review = new Date(srsData.next_review); 
+
+        
+        await review.save();
+
+        res.json({
+            message: "Review successfully rated.",
+            updatedReview: review
+        });
+
+    } catch (error) {
+        console.error("Error rating review:", error);
+        res.status(500).json({ error: "Failed to process review rating.", details: error.message });
     }
-
-    // Lookup tracking state or build one if first time encountering item
-    let userWordState = await UserLesson.findOne({
-      where: { userId, vocabularyId },
-    });
-
-    if (!userWordState) {
-      userWordState = await UserLesson.create({
-        userId,
-        vocabularyId,
-        repetitions: 0,
-        easeFactor: 2.5,
-        intervalDays: 1,
-        nextReviewDate: new Date(),
-      });
-    }
-
-    // Process new calendar steps inside the specialized algorithm service
-    const { repetitions, easeFactor, intervalDays } = calculateNextReview(
-      userWordState,
-      rating,
-    );
-
-    // Compute calendar tracking timestamps offset by interval configurations
-    const calculatedNextReviewDate = new Date();
-    calculatedNextReviewDate.setDate(
-      calculatedNextReviewDate.getDate() + intervalDays,
-    );
-
-    // Mutate record attributes securely
-    await userWordState.update({
-      repetitions,
-      easeFactor,
-      intervalDays,
-      nextReviewDate: calculatedNextReviewDate,
-      lastReviewedAt: new Date(),
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "SRS scheduler successfully updated memory matrix intervals.",
-      nextReviewInDays: intervalDays,
-      nextReviewDate: calculatedNextReviewDate,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-module.exports = {
-  getDueReviews,
-  rateCardSession,
 };

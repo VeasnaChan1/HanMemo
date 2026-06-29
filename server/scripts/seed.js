@@ -21,26 +21,48 @@ const seedDatabase = async () => {
       role: 'learner'
     });
 
-    // 3. Create a deck and lesson
+    // 3. Create the main deck
     const deck = await Deck.create({ title: 'HSK 1', hsk_level: 1 });
-    const lesson = await Lesson.create({ deck_id: deck.id, title: 'Greetings', lesson_number: 1 });
 
-    // 4. Read the JSON file and seed the Vocabulary table
+    // 4. Read the JSON file
     const rawData = await fs.readFile(path.resolve(__dirname, '../data/hsk1.json'), 'utf-8');
     const vocabList = JSON.parse(rawData);
 
-    // Add the missing required fields (deck_id, lesson_id, hsk_level) to each word
-    const vocabDataToInsert = vocabList.map(word => ({
-      ...word,
-      deck_id: deck.id,
-      lesson_id: lesson.id,
-      hsk_level: 1
-    }));
+    // 5. >>> NEW CHUNKING LOGIC <<<
+    const WORDS_PER_LESSON = 10;
+    let totalWordsAdded = 0;
 
-    // Use bulkCreate to insert the whole array at once (much faster!)
-    await Vocabulary.bulkCreate(vocabDataToInsert);
+    // Loop through the JSON array in chunks of 10
+    for (let i = 0; i < vocabList.length; i += WORDS_PER_LESSON) {
+      // Grab the next 10 words
+      const lessonChunk = vocabList.slice(i, i + WORDS_PER_LESSON);
+      
+      // Calculate the current lesson number (1, 2, 3, etc.)
+      const lessonNumber = Math.floor(i / WORDS_PER_LESSON) + 1;
 
-    console.log(`Database seeded successfully! Added ${vocabDataToInsert.length} vocabulary words.`);
+      // Create a new Lesson in the database for this chunk
+      const newLesson = await Lesson.create({ 
+        deck_id: deck.id, 
+        title: `HSK 1 - Lesson ${lessonNumber}`, 
+        lesson_number: lessonNumber 
+      });
+
+      // Add the missing required fields to each word in this specific chunk
+      const vocabDataToInsert = lessonChunk.map(word => ({
+        ...word,
+        deck_id: deck.id,
+        lesson_id: newLesson.id, // Attach to the newly created lesson!
+        hsk_level: 1
+      }));
+
+      // Insert these 10 words into the database
+      await Vocabulary.bulkCreate(vocabDataToInsert);
+      
+      totalWordsAdded += vocabDataToInsert.length;
+      console.log(`Created Lesson ${lessonNumber} with ${vocabDataToInsert.length} words.`);
+    }
+
+    console.log(`\n🎉 Database seeded successfully! Added ${totalWordsAdded} vocabulary words across ${Math.ceil(vocabList.length / WORDS_PER_LESSON)} lessons.`);
   } catch (error) {
     console.error("Seeding error:", error);
   } finally {

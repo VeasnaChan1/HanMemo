@@ -7,12 +7,21 @@
 
 ### 1. Register a new user (Happy Path)
 # Expected outcome: 201 Created. Returns a success message, the user object, and a JWT token.
+# POST {{baseUrl}}/auth/register
+# Content-Type: application/json
+
+# {
+#   "name": "Veasna Tester",
+#   "email": "veasna@hanmemo.com",
+#   "password": "securepassword123"
+# }
+
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "name": "Veasna Tester",
-  "email": "veasna@hanmemo.com",
+  "name": "Veasna1 Tester",
+  "email": "veasna1@hanmemo.com",
   "password": "securepassword123"
 }
 
@@ -113,3 +122,175 @@ POST http://localhost:5000/api/lessons/1/complete
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
 Content-Type: application/json
 
+### Test 1: Generate a Quiz for Lesson 1
+GET http://localhost:5000/api/lessons/1/quiz
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI0ODE0MjcsImV4cCI6MTc4MzA4NjIyN30.kzK3rVVeTQK7bV0JoW1iQ6H_Vcs1twE-OkTQGJ0OKY4
+
+###
+
+### 2. Complete the Lesson (Triggering SRS)
+# REPLACE 'YOUR_JWT_TOKEN' with the actual token string from Test 1
+POST http://localhost:5000/api/lessons/1/complete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{}
+
+
+### Test 1: Rate a card as "Good" (3)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{
+    "reviewSessionId": 1,
+    "rating": 3
+}
+
+### 0. Login to get token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@hanmemo.com",
+    "password": "yourpassword"
+}
+
+### --- THE SM-2 PROGRESSION TESTS --- ###
+
+### Scenario 1: First time seeing it -> User presses "Good" (3)
+# Expected outcome: Interval 1 day, Reps 1, Ease ~2.5
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 3 }
+
+### Scenario 2: Next day -> User presses "Good" (3) again
+# Expected outcome: Interval 6 days, Reps 2, Ease ~2.5
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 3 }
+
+### Scenario 3: 6 days later -> User presses "Easy" (4)
+# Expected outcome: Interval ~15 days (6 * 2.65), Reps 3, Ease increases to 2.65
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 4 }
+
+### Scenario 4: 15 days later -> User completely forgets it. Presses "Again" (1)
+# Expected outcome: Reps drop to 0, Interval drops to 1 day, Ease decreases heavily (~1.85)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 1 }
+
+### Scenario 5: User relearns it -> Presses "Hard" (2)
+# Expected outcome: Reps 1, Interval 1 day (because reps was 0), Ease decreases slightly (~1.7)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODI1ODA4OTIsImV4cCI6MTc4MzE4NTY5Mn0.IJ_M_r20gcYlHOWW3OP35q6I-xJ32DXH02ohQe21yYc
+Content-Type: application/json
+
+{ "reviewSessionId": 1, "rating": 2 }
+
+
+
+
+
+#admin testing
+
+### 0. Login (NOTE: You MUST log in as an Admin or Teacher!)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "veasna1@hanmemo.com",
+    "password": "securepassword123"
+}
+
+### 
+
+### 1. Create a New Lesson
+POST http://localhost:5000/api/admin/lessons
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "deck_id": 1,
+    "title": "HSK 1 - Lesson 16 (Admin Added)",
+    "lesson_number": 16,
+    "description": "Extra vocabulary added via Admin Dashboard"
+}
+
+###
+
+### 2. Update an Existing Lesson (Assume the new lesson's ID is 16)
+PATCH http://localhost:5000/api/admin/lessons/16
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "title": "HSK 1 - Lesson 16 (UPDATED TITLE)"
+}
+
+###
+
+### 3. Add New Vocabulary to the Lesson
+POST http://localhost:5000/api/admin/vocabulary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "deck_id": 1,
+    "lesson_id": 16,
+    "hsk_level": 1,
+    "hanzi": "电脑",
+    "pinyin": "diànnǎo",
+    "definition_en": "computer"
+}
+
+
+
+###
+
+### 4. Delete the Lesson (This will trigger the Cascade and delete the vocab too!)
+DELETE http://localhost:5000/api/admin/lessons/16
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+
+
+### =====================================
+### PROGRESS & VALIDATION TESTS
+### =====================================
+
+### 5. Get Dashboard Progress Metrics
+# Don't forget to replace YOUR_TOKEN_HERE with a fresh login token!
+GET http://localhost:5000/api/progress
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+
+###
+
+### 6. Validation Edge Case: Invalid Rating Number (Should fail with 400 Bad Request)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "reviewSessionId": 1,
+    "rating": 5 
+}
+
+###
+
+### 7. Validation Edge Case: Missing Data (Should fail with 400 Bad Request)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "rating": 3
+}
