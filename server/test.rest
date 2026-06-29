@@ -197,3 +197,67 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6I
 Content-Type: application/json
 
 { "reviewSessionId": 1, "rating": 2 }
+
+
+
+
+
+#admin testing
+
+### 0. Login (NOTE: You MUST log in as an Admin or Teacher!)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "veasna1@hanmemo.com",
+    "password": "securepassword123"
+}
+
+### 
+
+### 1. Create a New Lesson
+POST http://localhost:5000/api/admin/lessons
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "deck_id": 1,
+    "title": "HSK 1 - Lesson 16 (Admin Added)",
+    "lesson_number": 16,
+    "description": "Extra vocabulary added via Admin Dashboard"
+}
+
+###
+
+### 2. Update an Existing Lesson (Assume the new lesson's ID is 16)
+PATCH http://localhost:5000/api/admin/lessons/16
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "title": "HSK 1 - Lesson 16 (UPDATED TITLE)"
+}
+
+###
+
+### 3. Add New Vocabulary to the Lesson
+POST http://localhost:5000/api/admin/vocabulary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "deck_id": 1,
+    "lesson_id": 16,
+    "hsk_level": 1,
+    "hanzi": "电脑",
+    "pinyin": "diànnǎo",
+    "definition_en": "computer"
+}
+
+
+
+###
+
+### 4. Delete the Lesson (This will trigger the Cascade and delete the vocab too!)
+DELETE http://localhost:5000/api/admin/lessons/16
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
