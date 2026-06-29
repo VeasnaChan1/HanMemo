@@ -5,6 +5,9 @@ body {
   color: #1a1a2e;
   min-height: 100vh;
   font-family:
+    "Noto Sans Khmer",
+    "Noto Sans SC",
+    "Noto Sans",
     ui-sans-serif,
     system-ui,
     -apple-system,

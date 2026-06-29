@@ -1,15 +1,12 @@
 // src/app.js
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import lessonRoutes from './routes/lessonRoutes.js';
-
-// Load environment variables from your .env file
-dotenv.config();
 
 const app = express();
 
