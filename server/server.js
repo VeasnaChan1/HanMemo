@@ -2,6 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
@@ -18,6 +19,7 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use(helmet()); // Adds security headers
 app.use(cors()); // Allows your React frontend to talk to this server
 app.use(express.json()); // Allows your server to understand JSON data
 // Routes

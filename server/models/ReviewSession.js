@@ -32,6 +32,19 @@ const ReviewSession = sequelize.define('ReviewSession', {
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
+  indexes: [
+    // 1. Optimize performance for checking reviews due today
+    {
+      name: 'idx_user_next_review',
+      fields: ['user_id', 'next_review']
+    },
+    // 2. Ensure data integrity (a user shouldn't have duplicate session records for one word)
+    {
+      name: 'idx_user_vocab',
+      unique: true,
+      fields: ['user_id', 'vocab_id']
+    }
+  ]
 });
 
 export default ReviewSession;
