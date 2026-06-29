@@ -9,6 +9,8 @@ import userRoutes from './routes/userRoutes.js';
 import lessonRoutes from './routes/lessonRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import progressRoutes from './routes/progressRoutes.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 // Load environment variables from your .env file
 dotenv.config();
@@ -24,11 +26,13 @@ app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
-
+app.use('/api/progress', progressRoutes);
 // A simple test route
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the HanMemo API (ES Modules enabled)!" });
 });
+
+app.use(errorHandler);
 
 // Set the port and start the server
 const PORT =5000;

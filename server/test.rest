@@ -261,3 +261,36 @@ Content-Type: application/json
 ### 4. Delete the Lesson (This will trigger the Cascade and delete the vocab too!)
 DELETE http://localhost:5000/api/admin/lessons/16
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+
+
+### =====================================
+### PROGRESS & VALIDATION TESTS
+### =====================================
+
+### 5. Get Dashboard Progress Metrics
+# Don't forget to replace YOUR_TOKEN_HERE with a fresh login token!
+GET http://localhost:5000/api/progress
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+
+###
+
+### 6. Validation Edge Case: Invalid Rating Number (Should fail with 400 Bad Request)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "reviewSessionId": 1,
+    "rating": 5 
+}
+
+###
+
+### 7. Validation Edge Case: Missing Data (Should fail with 400 Bad Request)
+POST http://localhost:5000/api/reviews/rate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgyNzEzNzI5LCJleHAiOjE3ODMzMTg1Mjl9.elICuFQpjjHM8BS7bFtQSpcRVCJzadqETybZz3RYQng
+Content-Type: application/json
+
+{
+    "rating": 3
+}
