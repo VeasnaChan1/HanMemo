@@ -16,13 +16,23 @@
 #   "password": "securepassword123"
 # }
 
+# POST {{baseUrl}}/auth/register
+# Content-Type: application/json
+
+# {
+#   "name": "Veasna1 Tester",
+#   "email": "veasna1@hanmemo.com",
+#   "password": "securepassword123"
+# }
+
+
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "name": "Veasna1 Tester",
-  "email": "veasna1@hanmemo.com",
-  "password": "securepassword123"
+  "name": "Veasna2 tester",
+  "email": "veasna2@hanmemo.com",
+  "password": "reallySecure123"
 }
 
 ###
