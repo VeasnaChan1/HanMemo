@@ -2,12 +2,18 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import dotenv from 'dotenv';
+
+import { errorHandler } from './middlewares/errorHandler.js';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import lessonRoutes from './routes/lessonRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import progressRoutes from './routes/progressRoutes.js';
 
 // Load environment variables from your .env file
 dotenv.config();
