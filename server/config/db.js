@@ -9,17 +9,17 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from the server folder .env file
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// Initialize Sequelize with safe fallbacks so local development works even if the .env file is not loaded.
+// Initialize Sequelize with Railway variable names first, fall back to local names
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'hanmemo',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || 'root',
+  process.env.MYSQLDATABASE || process.env.DB_NAME || 'hanmemo',
+  process.env.MYSQLUSER || process.env.DB_USER || 'root',
+  process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || 'root',
   {
-    host: process.env.DB_HOST || 'localhost',
-    dialect: 'mysql', // This tells Sequelize which database engine to use
-    logging: false,   // Set this to console.log if you want to see the raw SQL queries in your terminal
+    host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+    port: process.env.MYSQLPORT || 3306,
+    dialect: 'mysql',
+    logging: false,
   }
 );
-
 // We export 'sequelize' instead of 'db' to match standard conventions
 export default sequelize;
