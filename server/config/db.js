@@ -6,20 +6,37 @@ import dotenv from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from the server folder .env file
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// Initialize Sequelize with Railway variable names first, fall back to local names
+// Use internal Railway address when on Railway, external when local
+const host = process.env.NODE_ENV === 'production' 
+  ? 'mysql.railway.internal'  // ← Internal Railway network
+  : (process.env.DB_HOST || 'localhost');  // ← Local/external
+
+const port = process.env.NODE_ENV === 'production'
+  ? 3306  // ← Railway internal uses standard port
+  : (process.env.MYSQLPORT || 3306);
+
 const sequelize = new Sequelize(
-  process.env.MYSQLDATABASE || process.env.DB_NAME || 'hanmemo',
+  process.env.MYSQLDATABASE || process.env.DB_NAME || 'HanMemo',
   process.env.MYSQLUSER || process.env.DB_USER || 'root',
-  process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || 'root',
+  process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
   {
-    host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
-    port: process.env.MYSQLPORT || 3306,
+    host: host,
+    port: port,
     dialect: 'mysql',
     logging: false,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+    dialectOptions: {
+      connectTimeout: 60000,
+      enableKeepAlive: true,
+    },
   }
 );
-// We export 'sequelize' instead of 'db' to match standard conventions
+
 export default sequelize;
