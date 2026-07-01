@@ -11,7 +11,7 @@ const options = {
     servers: [
       {
         url: process.env.NODE_ENV === 'production' 
-          ? 'https://hanmemo-production-xxx.up.railway.app'
+          ? 'https://hanmemo-production.up.railway.app/api-docs'
           : 'http://localhost:5000',
         description: process.env.NODE_ENV === 'production' ? 'Production' : 'Development',
       },
