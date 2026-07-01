@@ -5,16 +5,19 @@
 ### AUTHENTICATION TESTS
 ### ==========================================
 
-### 1. Register a new user (Happy Path)
-# Expected outcome: 201 Created. Returns a success message, the user object, and a JWT token.
-# POST {{baseUrl}}/auth/register
-# Content-Type: application/json
 
-# {
-#   "name": "Veasna Tester",
-#   "email": "veasna@hanmemo.com",
-#   "password": "securepassword123"
-# }
+## 1. Register a new user (Happy Path)
+# Expected outcome: 201 Created. Returns a success message, the user object, and a JWT token.
+
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Veasna Tester",
+  "email": "veasna@hanmemo.com",
+  "password": "securepassword123"
+}
 
 # POST {{baseUrl}}/auth/register
 # Content-Type: application/json

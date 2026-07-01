@@ -39,6 +39,16 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 // Set the port and start the server
+
+(async () => {
+  try {
+    await sequelize.sync({ alter: true });
+    console.log(' Database synced');
+  } catch (err) {
+    console.error(' Sync failed:', err);
+  }
+})();
+
 const PORT =5000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
