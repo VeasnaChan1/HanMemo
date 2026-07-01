@@ -1,3 +1,13 @@
+/**
+ * @swagger
+ * /api/auth/login:
+ * post:
+ * summary: Log in a user
+ * responses:
+ * 200:
+ * description: Returns a JWT token
+ */
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';

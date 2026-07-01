@@ -5,10 +5,13 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import sequelize from '../config/db.js';
+import swaggerUi from 'swagger-ui-express';
+import { specs } from '../config/swagger.js';
 
 import { errorHandler } from '../middlewares/errorHandler.js';
 
 // Import routes
+
 import authRoutes from '../routes/authRoutes.js';
 import userRoutes from '../routes/userRoutes.js';
 import lessonRoutes from '../routes/lessonRoutes.js';
@@ -32,6 +35,10 @@ app.use('/api/lessons', lessonRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/progress', progressRoutes);
+
+
+// Swagger documentation route
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specs));
 // A simple test route
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the HanMemo API (ES Modules enabled)!" });
