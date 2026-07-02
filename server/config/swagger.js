@@ -1,32 +1,36 @@
-import swaggerJsdoc from 'swagger-jsdoc';
+// server/config/swagger.js
+// Serves the OpenAPI spec (openapi.yaml) at /api-docs via Swagger UI.
+//
+// Install:
+//   npm install swagger-ui-express yamljs --save
+//
+// Place openapi.yaml at: server/docs/openapi.yaml
+// (or update the path below if you keep it elsewhere)
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'HanMemo API',
-      version: '1.0.0',
-      description: 'Mandarin Chinese spaced repetition vocabulary app for Cambodian learners',
-    },
-    servers: [
-      {
-        url: process.env.NODE_ENV === 'production' 
-          ? 'https://hanmemo-production.up.railway.app'
-          : 'http://localhost:5000',
-        description: process.env.NODE_ENV === 'production' ? 'Production' : 'Development',
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
-  },
-  apis: ['./routes/*.js', './controllers/*.js']
-};
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-export const specs = swaggerJsdoc(options);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const openapiPath = path.join(__dirname, '../docs/openapi.yaml');
+const swaggerDocument = YAML.load(openapiPath);
+
+export function setupSwagger(app) {
+  app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument, {
+      customSiteTitle: 'HanMemo API Docs',
+    })
+  );
+
+  // Optional: expose the raw spec as JSON too, useful for Postman import
+  app.get('/api-docs.json', (req, res) => {
+    res.json(swaggerDocument);
+  });
+
+  console.log('Swagger docs available at /api-docs');
+}
