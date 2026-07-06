@@ -1,5 +1,5 @@
 # Set your base URL as a variable so you don't have to retype it
-@baseUrl = http://localhost:5000/api
+@baseUrl = https://hanmemo-production.up.railway.app/api
 
 ### ==========================================
 ### AUTHENTICATION TESTS
@@ -10,14 +10,14 @@
 # Expected outcome: 201 Created. Returns a success message, the user object, and a JWT token.
 
 
-POST {{baseUrl}}/auth/register
-Content-Type: application/json
+# POST {{baseUrl}}/auth/register
+# Content-Type: application/json
 
-{
-  "name": "Veasna Tester",
-  "email": "veasna@hanmemo.com",
-  "password": "securepassword123"
-}
+# {
+#   "name": "Veasna Tester",
+#   "email": "veasna@hanmemo.com",
+#   "password": "securepassword123"
+# }
 
 # POST {{baseUrl}}/auth/register
 # Content-Type: application/json

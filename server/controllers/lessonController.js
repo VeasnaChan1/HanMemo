@@ -2,18 +2,44 @@ import { Lesson, Vocabulary, UserLesson, ReviewSession } from '../models/index.j
 import { generateLessonQuiz } from '../services/quizService.js';
 
 // 1. Implement GET /api/lessons
-export const getAllLessons = async (req, res) => {
+// export const getAllLessons = async (req, res) => {
+//     try {
+//         const lessons = await Lesson.findAll({
+//             order: [['lesson_number', 'ASC']] // Keep them in logical order
+//         });
+//         res.json({ lessons });
+//     } catch (error) {
+//         console.error("Error fetching lessons:", error);
+//         res.status(500).json({ error: "Failed to fetch lessons." });
+//     }
+// };
+
+
+// 1. Implement GET /api/lessons (UPDATED for HSK Filtering)
+export const getAllLessons = async (req, res, next) => {
     try {
+        const userId = req.user.id;
+
+        // Fetch the logged-in user to see what HSK level they selected
+        const user = await User.findByPk(userId);
+
+        // Fetch lessons that belong to Decks matching the user's HSK level
         const lessons = await Lesson.findAll({
-            order: [['lesson_number', 'ASC']] // Keep them in logical order
+            include: [{
+                model: Deck,
+                where: { hsk_level: user.hsk_level },
+                attributes: ['title', 'hsk_level'] // Optional: include deck info
+            }],
+            order: [['lesson_number', 'ASC']]
         });
+
         res.json({ lessons });
     } catch (error) {
         console.error("Error fetching lessons:", error);
-        res.status(500).json({ error: "Failed to fetch lessons." });
+        // Using next(error) passes it to your global error handler!
+        next(error);
     }
 };
-
 // 2. Implement GET /api/lessons/:id with vocabulary
 export const getLessonById = async (req, res) => {
     try {
