@@ -860,6 +860,649 @@
 "example_en": "Where is the train station?",
 "example_km": "ស្ថានីយរថភ្លើងនៅឯណា?"
 }
+,
+{
+"hanzi": "公司",
+"pinyin": "gōngsī",
+"definition_en": "company",
+"definition_km": "ក្រុមហ៊ុន",
+"example_cn": "我爸爸在公司工作。",
+"example_pinyin": "Wǒ bàba zài gōngsī gōngzuò.",
+"example_en": "My father works at a company.",
+"example_km": "ឪពុករបស់ខ្ញុំធ្វើការនៅក្រុមហ៊ុនមួយ។"
+},
+{
+"hanzi": "宾馆",
+"pinyin": "bīnguǎn",
+"definition_en": "hotel",
+"definition_km": "សណ្ឋាគារ",
+"example_cn": "我们住在宾馆。",
+"example_pinyin": "Wǒmen zhù zài bīnguǎn.",
+"example_en": "We are staying at a hotel.",
+"example_km": "យើងស្នាក់នៅសណ្ឋាគារមួយ។"
+},
+{
+"hanzi": "说话",
+"pinyin": "shuōhuà",
+"definition_en": "to talk; to speak",
+"definition_km": "និយាយ",
+"example_cn": "请不要说话。",
+"example_pinyin": "Qǐng bú yào shuōhuà.",
+"example_en": "Please don't talk.",
+"example_km": "សូមកុំនិយាយ។"
+},
+{
+"hanzi": "卖",
+"pinyin": "mài",
+"definition_en": "to sell",
+"definition_km": "លក់",
+"example_cn": "这家店卖水果。",
+"example_pinyin": "Zhè jiā diàn mài shuǐguǒ.",
+"example_en": "This shop sells fruit.",
+"example_km": "ហាងនេះលក់ផ្លែឈើ។"
+},
+{
+"hanzi": "问",
+"pinyin": "wèn",
+"definition_en": "to ask",
+"definition_km": "សួរ",
+"example_cn": "我想问一个问题。",
+"example_pinyin": "Wǒ xiǎng wèn yí ge wèntí.",
+"example_en": "I want to ask a question.",
+"example_km": "ខ្ញុំចង់សួរសំណួរមួយ។"
+},
+{
+"hanzi": "走",
+"pinyin": "zǒu",
+"definition_en": "to walk",
+"definition_km": "ដើរ",
+"example_cn": "我们一起走吧。",
+"example_pinyin": "Wǒmen yìqǐ zǒu ba.",
+"example_en": "Let's walk together.",
+"example_km": "តោះយើងដើរជាមួយគ្នា។"
+},
+{
+"hanzi": "进",
+"pinyin": "jìn",
+"definition_en": "to enter",
+"definition_km": "ចូល",
+"example_cn": "请进。",
+"example_pinyin": "Qǐng jìn.",
+"example_en": "Please come in.",
+"example_km": "សូមចូល។"
+},
+{
+"hanzi": "出",
+"pinyin": "chū",
+"definition_en": "to go out; to come out",
+"definition_km": "ចេញ",
+"example_cn": "他刚出去。",
+"example_pinyin": "Tā gāng chūqù.",
+"example_en": "He just went out.",
+"example_km": "គាត់ទើបតែចេញទៅ។"
+},
+{
+"hanzi": "跑步",
+"pinyin": "pǎobù",
+"definition_en": "to run; running",
+"definition_km": "រត់",
+"example_cn": "我每天跑步。",
+"example_pinyin": "Wǒ měitiān pǎobù.",
+"example_en": "I run every day.",
+"example_km": "ខ្ញុំរត់រាល់ថ្ងៃ។"
+},
+{
+"hanzi": "到",
+"pinyin": "dào",
+"definition_en": "to arrive",
+"definition_km": "មកដល់",
+"example_cn": "我到了学校。",
+"example_pinyin": "Wǒ dào le xuéxiào.",
+"example_en": "I arrived at school.",
+"example_km": "ខ្ញុំបានមកដល់សាលា។"
+},
+{
+"hanzi": "穿",
+"pinyin": "chuān",
+"definition_en": "to wear",
+"definition_km": "ពាក់",
+"example_cn": "今天我穿新衣服。",
+"example_pinyin": "Jīntiān wǒ chuān xīn yīfu.",
+"example_en": "Today I am wearing new clothes.",
+"example_km": "ថ្ងៃនេះខ្ញុំពាក់សម្លៀកបំពាក់ថ្មី។"
+},
+{
+"hanzi": "洗",
+"pinyin": "xǐ",
+"definition_en": "to wash",
+"definition_km": "លាង",
+"example_cn": "我在洗手。",
+"example_pinyin": "Wǒ zài xǐ shǒu.",
+"example_en": "I am washing my hands.",
+"example_km": "ខ្ញុំកំពុងលាងដៃ។"
+},
+{
+"hanzi": "给",
+"pinyin": "gěi",
+"definition_en": "to give; for",
+"definition_km": "ឱ្យ",
+"example_cn": "请给我一本书。",
+"example_pinyin": "Qǐng gěi wǒ yì běn shū.",
+"example_en": "Please give me a book.",
+"example_km": "សូមឱ្យសៀវភៅមួយក្បាលដល់ខ្ញុំ។"
+},
+{
+"hanzi": "找",
+"pinyin": "zhǎo",
+"definition_en": "to find; to look for",
+"definition_km": "រក",
+"example_cn": "我在找我的手机。",
+"example_pinyin": "Wǒ zài zhǎo wǒ de shǒujī.",
+"example_en": "I am looking for my cellphone.",
+"example_km": "ខ្ញុំកំពុងរកទូរស័ព្ទដៃរបស់ខ្ញុំ។"
+},
+{
+"hanzi": "懂",
+"pinyin": "dǒng",
+"definition_en": "to understand",
+"definition_km": "យល់",
+"example_cn": "我懂你的意思。",
+"example_pinyin": "Wǒ dǒng nǐ de yìsi.",
+"example_en": "I understand what you mean.",
+"example_km": "ខ្ញុំយល់អត្ថន័យរបស់អ្នក។"
+},
+{
+"hanzi": "笑",
+"pinyin": "xiào",
+"definition_en": "to smile; to laugh",
+"definition_km": "ញញឹម; សើច",
+"example_cn": "她笑了。",
+"example_pinyin": "Tā xiào le.",
+"example_en": "She smiled.",
+"example_km": "នាងបានញញឹម។"
+},
+{
+"hanzi": "告诉",
+"pinyin": "gàosu",
+"definition_en": "to tell",
+"definition_km": "ប្រាប់",
+"example_cn": "请告诉我。",
+"example_pinyin": "Qǐng gàosu wǒ.",
+"example_en": "Please tell me.",
+"example_km": "សូមប្រាប់ខ្ញុំ។"
+},
+{
+"hanzi": "准备",
+"pinyin": "zhǔnbèi",
+"definition_en": "to prepare",
+"definition_km": "ត្រៀម",
+"example_cn": "我准备考试。",
+"example_pinyin": "Wǒ zhǔnbèi kǎoshì.",
+"example_en": "I am preparing for the exam.",
+"example_km": "ខ្ញុំកំពុងត្រៀមប្រឡង។"
+},
+{
+"hanzi": "开始",
+"pinyin": "kāishǐ",
+"definition_en": "to begin; to start",
+"definition_km": "ចាប់ផ្តើម",
+"example_cn": "我们开始上课。",
+"example_pinyin": "Wǒmen kāishǐ shàngkè.",
+"example_en": "Let's begin the class.",
+"example_km": "យើងចាប់ផ្តើមរៀន។"
+},
+{
+"hanzi": "介绍",
+"pinyin": "jièshào",
+"definition_en": "to introduce",
+"definition_km": "ណែនាំ",
+"example_cn": "我来介绍一下。",
+"example_pinyin": "Wǒ lái jièshào yīxià.",
+"example_en": "Let me introduce myself.",
+"example_km": "សូមឱ្យខ្ញុំណែនាំខ្លួនបន្តិច។"
+},
+{
+"hanzi": "帮助",
+"pinyin": "bāngzhù",
+"definition_en": "to help; help",
+"definition_km": "ជួយ; ជំនួយ",
+"example_cn": "谢谢你的帮助。",
+"example_pinyin": "Xièxie nǐ de bāngzhù.",
+"example_en": "Thank you for your help.",
+"example_km": "សូមអរគុណសម្រាប់ការជួយរបស់អ្នក។"
+},
+{
+"hanzi": "玩",
+"pinyin": "wán",
+"definition_en": "to play; to have fun",
+"definition_km": "លេង",
+"example_cn": "孩子们在玩。",
+"example_pinyin": "Háizimen zài wán.",
+"example_en": "The children are playing.",
+"example_km": "ក្មេងៗកំពុងលេង។"
+}
+,
+{
+"hanzi": "送",
+"pinyin": "sòng",
+"definition_en": "to give; to send",
+"definition_km": "ជូន; ផ្ញើ",
+"example_cn": "我送你一本书。",
+"example_pinyin": "Wǒ sòng nǐ yì běn shū.",
+"example_en": "I will give you a book.",
+"example_km": "ខ្ញុំនឹងជូនសៀវភៅមួយក្បាលដល់អ្នក។"
+},
+{
+"hanzi": "等",
+"pinyin": "děng",
+"definition_en": "to wait",
+"definition_km": "រង់ចាំ",
+"example_cn": "请等我一下。",
+"example_pinyin": "Qǐng děng wǒ yīxià.",
+"example_en": "Please wait for me a moment.",
+"example_km": "សូមរង់ចាំខ្ញុំមួយភ្លែត។"
+},
+{
+"hanzi": "让",
+"pinyin": "ràng",
+"definition_en": "to let; to allow",
+"definition_km": "អនុញ្ញាតឱ្យ; ឱ្យ",
+"example_cn": "老师让我们坐下。",
+"example_pinyin": "Lǎoshī ràng wǒmen zuò xià.",
+"example_en": "The teacher lets us sit down.",
+"example_km": "គ្រូឱ្យពួកយើងអង្គុយ។"
+},
+{
+"hanzi": "起床",
+"pinyin": "qǐchuáng",
+"definition_en": "to get up",
+"definition_km": "ក្រោកពីគេង",
+"example_cn": "我每天六点起床。",
+"example_pinyin": "Wǒ měitiān liù diǎn qǐchuáng.",
+"example_en": "I get up at six every day.",
+"example_km": "ខ្ញុំក្រោកពីគេងម៉ោងប្រាំមួយរាល់ថ្ងៃ។"
+},
+{
+"hanzi": "唱歌",
+"pinyin": "chànggē",
+"definition_en": "to sing",
+"definition_km": "ច្រៀង",
+"example_cn": "她喜欢唱歌。",
+"example_pinyin": "Tā xǐhuān chànggē.",
+"example_en": "She likes singing.",
+"example_km": "នាងចូលចិត្តច្រៀង។"
+},
+{
+"hanzi": "跳舞",
+"pinyin": "tiàowǔ",
+"definition_en": "to dance",
+"definition_km": "រាំ",
+"example_cn": "他们在跳舞。",
+"example_pinyin": "Tāmen zài tiàowǔ.",
+"example_en": "They are dancing.",
+"example_km": "ពួកគេកំពុងរាំ។"
+},
+{
+"hanzi": "旅游",
+"pinyin": "lǚyóu",
+"definition_en": "to travel",
+"definition_km": "ធ្វើដំណើរកម្សាន្ត",
+"example_cn": "我们去中国旅游。",
+"example_pinyin": "Wǒmen qù Zhōngguó lǚyóu.",
+"example_en": "We are traveling to China.",
+"example_km": "យើងទៅធ្វើដំណើរកម្សាន្តនៅប្រទេសចិន។"
+},
+{
+"hanzi": "上班",
+"pinyin": "shàngbān",
+"definition_en": "to go to work",
+"definition_km": "ទៅធ្វើការ",
+"example_cn": "爸爸八点上班。",
+"example_pinyin": "Bàba bā diǎn shàngbān.",
+"example_en": "Dad goes to work at eight o'clock.",
+"example_km": "ឪពុកទៅធ្វើការនៅម៉ោងប្រាំបី។"
+},
+{
+"hanzi": "生病",
+"pinyin": "shēngbìng",
+"definition_en": "to get sick",
+"definition_km": "ឈឺ",
+"example_cn": "我生病了。",
+"example_pinyin": "Wǒ shēngbìng le.",
+"example_en": "I am sick.",
+"example_km": "ខ្ញុំឈឺហើយ។"
+},
+{
+"hanzi": "休息",
+"pinyin": "xiūxi",
+"definition_en": "to rest",
+"definition_km": "សម្រាក",
+"example_cn": "我们休息一下。",
+"example_pinyin": "Wǒmen xiūxi yīxià.",
+"example_en": "Let's take a short rest.",
+"example_km": "តោះយើងសម្រាកបន្តិច។"
+},
+{
+"hanzi": "运动",
+"pinyin": "yùndòng",
+"definition_en": "to exercise; exercise",
+"definition_km": "ហាត់ប្រាណ",
+"example_cn": "我每天运动。",
+"example_pinyin": "Wǒ měitiān yùndòng.",
+"example_en": "I exercise every day.",
+"example_km": "ខ្ញុំហាត់ប្រាណរាល់ថ្ងៃ។"
+},
+{
+"hanzi": "游泳",
+"pinyin": "yóuyǒng",
+"definition_en": "to swim",
+"definition_km": "ហែលទឹក",
+"example_cn": "我会游泳。",
+"example_pinyin": "Wǒ huì yóuyǒng.",
+"example_en": "I can swim.",
+"example_km": "ខ្ញុំអាចហែលទឹកបាន។"
+},
+{
+"hanzi": "踢足球",
+"pinyin": "tī zúqiú",
+"definition_en": "to play football",
+"definition_km": "លេងបាល់ទាត់",
+"example_cn": "他们喜欢踢足球。",
+"example_pinyin": "Tāmen xǐhuān tī zúqiú.",
+"example_en": "They like playing football.",
+"example_km": "ពួកគេចូលចិត្តលេងបាល់ទាត់។"
+},
+{
+"hanzi": "打篮球",
+"pinyin": "dǎ lánqiú",
+"definition_en": "to play basketball",
+"definition_km": "លេងបាល់បោះ",
+"example_cn": "我常常打篮球。",
+"example_pinyin": "Wǒ chángcháng dǎ lánqiú.",
+"example_en": "I often play basketball.",
+"example_km": "ខ្ញុំតែងតែលេងបាល់បោះ។"
+},
+{
+"hanzi": "完",
+"pinyin": "wán",
+"definition_en": "to finish; to be over",
+"definition_km": "បញ្ចប់",
+"example_cn": "我写完了。",
+"example_pinyin": "Wǒ xiě wán le.",
+"example_en": "I have finished writing.",
+"example_km": "ខ្ញុំសរសេររួចហើយ។"
+},
+{
+"hanzi": "觉得",
+"pinyin": "juéde",
+"definition_en": "to think; to feel",
+"definition_km": "គិតថា; មានអារម្មណ៍ថា",
+"example_cn": "我觉得很好。",
+"example_pinyin": "Wǒ juéde hěn hǎo.",
+"example_en": "I think it is very good.",
+"example_km": "ខ្ញុំគិតថាវាល្អណាស់។"
+},
+{
+"hanzi": "知道",
+"pinyin": "zhīdao",
+"definition_en": "to know",
+"definition_km": "ដឹង",
+"example_cn": "我知道他的名字。",
+"example_pinyin": "Wǒ zhīdao tā de míngzi.",
+"example_en": "I know his name.",
+"example_km": "ខ្ញុំដឹងឈ្មោះរបស់គាត់។"
+},
+{
+"hanzi": "希望",
+"pinyin": "xīwàng",
+"definition_en": "to hope; hope",
+"definition_km": "សង្ឃឹម",
+"example_cn": "我希望你快乐。",
+"example_pinyin": "Wǒ xīwàng nǐ kuàilè.",
+"example_en": "I hope you are happy.",
+"example_km": "ខ្ញុំសង្ឃឹមថាអ្នកសប្បាយចិត្ត។"
+},
+{
+"hanzi": "可以",
+"pinyin": "kěyǐ",
+"definition_en": "can; may",
+"definition_km": "អាច",
+"example_cn": "我可以进来吗？",
+"example_pinyin": "Wǒ kěyǐ jìnlái ma?",
+"example_en": "May I come in?",
+"example_km": "តើខ្ញុំអាចចូលបានទេ?"
+},
+{
+"hanzi": "要",
+"pinyin": "yào",
+"definition_en": "to want; to need",
+"definition_km": "ចង់; ត្រូវការ",
+"example_cn": "我要一杯水。",
+"example_pinyin": "Wǒ yào yì bēi shuǐ.",
+"example_en": "I want a glass of water.",
+"example_km": "ខ្ញុំចង់បានទឹកមួយកែវ។"
+},
+{
+"hanzi": "可能",
+"pinyin": "kěnéng",
+"definition_en": "may; might; possible",
+"definition_km": "ប្រហែលជា; អាចជា",
+"example_cn": "他今天可能不来。",
+"example_pinyin": "Tā jīntiān kěnéng bù lái.",
+"example_en": "He may not come today.",
+"example_km": "គាត់ប្រហែលជាមិនមកថ្ងៃនេះទេ។"
+},
+{
+"hanzi": "高",
+"pinyin": "gāo",
+"definition_en": "tall; high",
+"definition_km": "ខ្ពស់",
+"example_cn": "这座山很高。",
+"example_pinyin": "Zhè zuò shān hěn gāo.",
+"example_en": "This mountain is very high.",
+"example_km": "ភ្នំនេះខ្ពស់ណាស់។"
+}
+,
+{
+"hanzi": "红",
+"pinyin": "hóng",
+"definition_en": "red",
+"definition_km": "ក្រហម",
+"example_cn": "我喜欢红颜色。",
+"example_pinyin": "Wǒ xǐhuān hóng yánsè.",
+"example_en": "I like the color red.",
+"example_km": "ខ្ញុំចូលចិត្តពណ៌ក្រហម។"
+},
+{
+"hanzi": "白",
+"pinyin": "bái",
+"definition_en": "white",
+"definition_km": "ស",
+"example_cn": "这只猫是白色的。",
+"example_pinyin": "Zhè zhī māo shì báisè de.",
+"example_en": "This cat is white.",
+"example_km": "ឆ្មានេះមានពណ៌ស។"
+},
+{
+"hanzi": "黑",
+"pinyin": "hēi",
+"definition_en": "black",
+"definition_km": "ខ្មៅ",
+"example_cn": "他的车是黑色的。",
+"example_pinyin": "Tā de chē shì hēisè de.",
+"example_en": "His car is black.",
+"example_km": "ឡានរបស់គាត់មានពណ៌ខ្មៅ។"
+},
+{
+"hanzi": "忙",
+"pinyin": "máng",
+"definition_en": "busy",
+"definition_km": "រវល់",
+"example_cn": "今天我很忙。",
+"example_pinyin": "Jīntiān wǒ hěn máng.",
+"example_en": "I am very busy today.",
+"example_km": "ថ្ងៃនេះខ្ញុំរវល់ណាស់។"
+},
+{
+"hanzi": "快",
+"pinyin": "kuài",
+"definition_en": "fast; quick",
+"definition_km": "លឿន",
+"example_cn": "他跑得很快。",
+"example_pinyin": "Tā pǎo de hěn kuài.",
+"example_en": "He runs very fast.",
+"example_km": "គាត់រត់លឿនណាស់។"
+},
+{
+"hanzi": "慢",
+"pinyin": "màn",
+"definition_en": "slow",
+"definition_km": "យឺត",
+"example_cn": "请慢一点。",
+"example_pinyin": "Qǐng màn yìdiǎn.",
+"example_en": "Please slow down a little.",
+"example_km": "សូមយឺតបន្តិច។"
+},
+{
+"hanzi": "远",
+"pinyin": "yuǎn",
+"definition_en": "far",
+"definition_km": "ឆ្ងាយ",
+"example_cn": "学校很远。",
+"example_pinyin": "Xuéxiào hěn yuǎn.",
+"example_en": "The school is far away.",
+"example_km": "សាលារៀននៅឆ្ងាយ។"
+},
+{
+"hanzi": "近",
+"pinyin": "jìn",
+"definition_en": "near; close",
+"definition_km": "ជិត",
+"example_cn": "我家很近。",
+"example_pinyin": "Wǒ jiā hěn jìn.",
+"example_en": "My home is nearby.",
+"example_km": "ផ្ទះរបស់ខ្ញុំនៅជិត។"
+},
+{
+"hanzi": "好吃",
+"pinyin": "hǎochī",
+"definition_en": "delicious",
+"definition_km": "ឆ្ងាញ់",
+"example_cn": "这个菜很好吃。",
+"example_pinyin": "Zhège cài hěn hǎochī.",
+"example_en": "This dish is delicious.",
+"example_km": "ម្ហូបនេះឆ្ងាញ់ណាស់។"
+},
+{
+"hanzi": "累",
+"pinyin": "lèi",
+"definition_en": "tired",
+"definition_km": "នឿយហត់",
+"example_cn": "我今天很累。",
+"example_pinyin": "Wǒ jīntiān hěn lèi.",
+"example_en": "I am very tired today.",
+"example_km": "ថ្ងៃនេះខ្ញុំនឿយហត់ណាស់។"
+},
+{
+"hanzi": "长",
+"pinyin": "cháng",
+"definition_en": "long",
+"definition_km": "វែង",
+"example_cn": "这条路很长。",
+"example_pinyin": "Zhè tiáo lù hěn cháng.",
+"example_en": "This road is very long.",
+"example_km": "ផ្លូវនេះវែងណាស់។"
+},
+{
+"hanzi": "新",
+"pinyin": "xīn",
+"definition_en": "new",
+"definition_km": "ថ្មី",
+"example_cn": "这是我的新书。",
+"example_pinyin": "Zhè shì wǒ de xīn shū.",
+"example_en": "This is my new book.",
+"example_km": "នេះជាសៀវភៅថ្មីរបស់ខ្ញុំ។"
+},
+{
+"hanzi": "贵",
+"pinyin": "guì",
+"definition_en": "expensive",
+"definition_km": "ថ្លៃ",
+"example_cn": "这件衣服很贵。",
+"example_pinyin": "Zhè jiàn yīfu hěn guì.",
+"example_en": "These clothes are expensive.",
+"example_km": "សម្លៀកបំពាក់នេះថ្លៃណាស់។"
+},
+{
+"hanzi": "便宜",
+"pinyin": "piányi",
+"definition_en": "cheap; inexpensive",
+"definition_km": "ថោក",
+"example_cn": "这个苹果很便宜。",
+"example_pinyin": "Zhège píngguǒ hěn piányi.",
+"example_en": "This apple is cheap.",
+"example_km": "ផ្លែប៉ោមនេះថោកណាស់។"
+},
+{
+"hanzi": "晴",
+"pinyin": "qíng",
+"definition_en": "sunny; fine",
+"definition_km": "មេឃស្រឡះ",
+"example_cn": "今天天气晴。",
+"example_pinyin": "Jīntiān tiānqì qíng.",
+"example_en": "The weather is sunny today.",
+"example_km": "ថ្ងៃនេះមេឃស្រឡះ។"
+},
+{
+"hanzi": "阴",
+"pinyin": "yīn",
+"definition_en": "cloudy",
+"definition_km": "មេឃស្រអាប់",
+"example_cn": "今天是阴天。",
+"example_pinyin": "Jīntiān shì yīntiān.",
+"example_en": "Today is cloudy.",
+"example_km": "ថ្ងៃនេះមេឃស្រអាប់។"
+},
+{
+"hanzi": "错",
+"pinyin": "cuò",
+"definition_en": "wrong",
+"definition_km": "ខុស",
+"example_cn": "你的答案错了。",
+"example_pinyin": "Nǐ de dá'àn cuò le.",
+"example_en": "Your answer is wrong.",
+"example_km": "ចម្លើយរបស់អ្នកខុសហើយ។"
+},
+{
+"hanzi": "快乐",
+"pinyin": "kuàilè",
+"definition_en": "happy",
+"definition_km": "សប្បាយរីករាយ",
+"example_cn": "祝你快乐！",
+"example_pinyin": "Zhù nǐ kuàilè!",
+"example_en": "Wish you happiness!",
+"example_km": "សូមជូនពរឱ្យអ្នកសប្បាយរីករាយ!"
+},
+{
+"hanzi": "对",
+"pinyin": "duì",
+"definition_en": "to; toward",
+"definition_km": "ចំពោះ; ទៅកាន់",
+"example_cn": "他对我很好。",
+"example_pinyin": "Tā duì wǒ hěn hǎo.",
+"example_en": "He is very kind to me.",
+"example_km": "គាត់ល្អចំពោះខ្ញុំណាស់។"
+},
+{
+"hanzi": "对",
+"pinyin": "duì",
+"definition_en": "correct; right",
+"definition_km": "ត្រឹមត្រូវ",
+"example_cn": "你的答案是对的。",
+"example_pinyin": "Nǐ de dá'àn shì duì de.",
+"example_en": "Your answer is correct.",
+"example_km": "ចម្លើយរបស់អ្នកត្រឹមត្រូវ។"
+}
 
 ]
 
