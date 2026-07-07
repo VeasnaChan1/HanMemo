@@ -639,9 +639,227 @@
 "example_pinyin": "Zhège xīguā hěn dà.",
 "example_en": "This watermelon is very big.",
 "example_km": "ឪឡឹកនេះធំណាស់។"
+},
+{
+"hanzi": "咖啡",
+"pinyin": "kāfēi",
+"definition_en": "coffee",
+"definition_km": "កាហ្វេ",
+"example_cn": "我喜欢喝咖啡。",
+"example_pinyin": "Wǒ xǐhuān hē kāfēi.",
+"example_en": "I like drinking coffee.",
+"example_km": "ខ្ញុំចូលចិត្តផឹកកាហ្វេ។"
+},
+{
+"hanzi": "雪",
+"pinyin": "xuě",
+"definition_en": "snow",
+"definition_km": "ព្រិល",
+"example_cn": "冬天会下雪。",
+"example_pinyin": "Dōngtiān huì xià xuě.",
+"example_en": "It snows in winter.",
+"example_km": "រដូវរងារមានព្រិលធ្លាក់។"
+},
+{
+"hanzi": "药",
+"pinyin": "yào",
+"definition_en": "medicine",
+"definition_km": "ថ្នាំ",
+"example_cn": "我吃药了。",
+"example_pinyin": "Wǒ chī yào le.",
+"example_en": "I took medicine.",
+"example_km": "ខ្ញុំបានលេបថ្នាំហើយ។"
+},
+{
+"hanzi": "手机",
+"pinyin": "shǒujī",
+"definition_en": "cellphone",
+"definition_km": "ទូរស័ព្ទដៃ",
+"example_cn": "这是我的手机。",
+"example_pinyin": "Zhè shì wǒ de shǒujī.",
+"example_en": "This is my cellphone.",
+"example_km": "នេះគឺជាទូរស័ព្ទដៃរបស់ខ្ញុំ។"
+},
+{
+"hanzi": "手表",
+"pinyin": "shǒubiǎo",
+"definition_en": "watch",
+"definition_km": "នាឡិកាដៃ",
+"example_cn": "我的手表很漂亮。",
+"example_pinyin": "Wǒ de shǒubiǎo hěn piàoliang.",
+"example_en": "My watch is very beautiful.",
+"example_km": "នាឡិកាដៃរបស់ខ្ញុំស្អាតណាស់។"
+},
+{
+"hanzi": "眼睛",
+"pinyin": "yǎnjīng",
+"definition_en": "eye",
+"definition_km": "ភ្នែក",
+"example_cn": "她的眼睛很大。",
+"example_pinyin": "Tā de yǎnjīng hěn dà.",
+"example_en": "Her eyes are very big.",
+"example_km": "ភ្នែករបស់នាងធំណាស់។"
+},
+{
+"hanzi": "身体",
+"pinyin": "shēntǐ",
+"definition_en": "body; health",
+"definition_km": "រាងកាយ; សុខភាព",
+"example_cn": "你身体好吗？",
+"example_pinyin": "Nǐ shēntǐ hǎo ma?",
+"example_en": "Are you healthy?",
+"example_km": "តើសុខភាពអ្នកល្អទេ?"
+},
+{
+"hanzi": "公共汽车",
+"pinyin": "gōnggòng qìchē",
+"definition_en": "bus",
+"definition_km": "ឡានក្រុង",
+"example_cn": "我坐公共汽车去学校。",
+"example_pinyin": "Wǒ zuò gōnggòng qìchē qù xuéxiào.",
+"example_en": "I take the bus to school.",
+"example_km": "ខ្ញុំជិះឡានក្រុងទៅសាលា។"
+},
+{
+"hanzi": "报纸",
+"pinyin": "bàozhǐ",
+"definition_en": "newspaper",
+"definition_km": "កាសែត",
+"example_cn": "爸爸每天看报纸。",
+"example_pinyin": "Bàba měitiān kàn bàozhǐ.",
+"example_en": "Dad reads the newspaper every day.",
+"example_km": "ឪពុកអានកាសែតរាល់ថ្ងៃ។"
+},
+{
+"hanzi": "门",
+"pinyin": "mén",
+"definition_en": "door",
+"definition_km": "ទ្វារ",
+"example_cn": "请关门。",
+"example_pinyin": "Qǐng guān mén.",
+"example_en": "Please close the door.",
+"example_km": "សូមបិទទ្វារ។"
+},
+{
+"hanzi": "题",
+"pinyin": "tí",
+"definition_en": "question; problem item",
+"definition_km": "សំណួរ; លំហាត់",
+"example_cn": "这道题很难。",
+"example_pinyin": "Zhè dào tí hěn nán.",
+"example_en": "This question is difficult.",
+"example_km": "សំណួរនេះពិបាកណាស់។"
+},
+{
+"hanzi": "课",
+"pinyin": "kè",
+"definition_en": "lesson; class",
+"definition_km": "មេរៀន; ថ្នាក់រៀន",
+"example_cn": "我们今天有汉语课。",
+"example_pinyin": "Wǒmen jīntiān yǒu Hànyǔ kè.",
+"example_en": "We have Chinese class today.",
+"example_km": "ថ្ងៃនេះយើងមានថ្នាក់ភាសាចិន។"
+},
+{
+"hanzi": "姓",
+"pinyin": "xìng",
+"definition_en": "surname; family name",
+"definition_km": "នាមត្រកូល",
+"example_cn": "你姓什么？",
+"example_pinyin": "Nǐ xìng shénme?",
+"example_en": "What is your surname?",
+"example_km": "តើអ្នកមាននាមត្រកូលអ្វី?"
+},
+{
+"hanzi": "问题",
+"pinyin": "wèntí",
+"definition_en": "question; problem",
+"definition_km": "សំណួរ; បញ្ហា",
+"example_cn": "我有一个问题。",
+"example_pinyin": "Wǒ yǒu yí ge wèntí.",
+"example_en": "I have a question.",
+"example_km": "ខ្ញុំមានសំណួរមួយ។"
+},
+{
+"hanzi": "事情",
+"pinyin": "shìqing",
+"definition_en": "matter; thing",
+"definition_km": "រឿង; កិច្ចការ",
+"example_cn": "我有很多事情要做。",
+"example_pinyin": "Wǒ yǒu hěn duō shìqing yào zuò.",
+"example_en": "I have many things to do.",
+"example_km": "ខ្ញុំមានកិច្ចការជាច្រើនត្រូវធ្វើ។"
+},
+{
+"hanzi": "考试",
+"pinyin": "kǎoshì",
+"definition_en": "exam; test",
+"definition_km": "ការប្រឡង",
+"example_cn": "明天有考试。",
+"example_pinyin": "Míngtiān yǒu kǎoshì.",
+"example_en": "There is an exam tomorrow.",
+"example_km": "ថ្ងៃស្អែកមានការប្រឡង។"
+},
+{
+"hanzi": "票",
+"pinyin": "piào",
+"definition_en": "ticket",
+"definition_km": "សំបុត្រ",
+"example_cn": "我买了两张票。",
+"example_pinyin": "Wǒ mǎi le liǎng zhāng piào.",
+"example_en": "I bought two tickets.",
+"example_km": "ខ្ញុំបានទិញសំបុត្រពីរសន្លឹក។"
+},
+{
+"hanzi": "意思",
+"pinyin": "yìsi",
+"definition_en": "meaning",
+"definition_km": "អត្ថន័យ",
+"example_cn": "这个词是什么意思？",
+"example_pinyin": "Zhège cí shì shénme yìsi?",
+"example_en": "What does this word mean?",
+"example_km": "ពាក្យនេះមានន័យថាអ្វី?"
+},
+{
+"hanzi": "颜色",
+"pinyin": "yánsè",
+"definition_en": "color",
+"definition_km": "ពណ៌",
+"example_cn": "我喜欢这个颜色。",
+"example_pinyin": "Wǒ xǐhuān zhège yánsè.",
+"example_en": "I like this color.",
+"example_km": "ខ្ញុំចូលចិត្តពណ៌នេះ។"
+},
+{
+"hanzi": "铅笔",
+"pinyin": "qiānbǐ",
+"definition_en": "pencil",
+"definition_km": "ខ្មៅដៃ",
+"example_cn": "我的铅笔在哪里？",
+"example_pinyin": "Wǒ de qiānbǐ zài nǎlǐ?",
+"example_en": "Where is my pencil?",
+"example_km": "ខ្មៅដៃរបស់ខ្ញុំនៅឯណា?"
+},
+{
+"hanzi": "面条",
+"pinyin": "miàntiáo",
+"definition_en": "noodle",
+"definition_km": "មី; គុយទាវ",
+"example_cn": "我喜欢吃面条。",
+"example_pinyin": "Wǒ xǐhuān chī miàntiáo.",
+"example_en": "I like eating noodles.",
+"example_km": "ខ្ញុំចូលចិត្តញ៉ាំមី។"
+},
+{
+"hanzi": "火车站",
+"pinyin": "huǒchēzhàn",
+"definition_en": "train station",
+"definition_km": "ស្ថានីយរថភ្លើង",
+"example_cn": "火车站在哪里？",
+"example_pinyin": "Huǒchēzhàn zài nǎlǐ?",
+"example_en": "Where is the train station?",
+"example_km": "ស្ថានីយរថភ្លើងនៅឯណា?"
 }
-
-
 
 ]
 
