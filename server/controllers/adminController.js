@@ -96,11 +96,23 @@ export const deleteDeck = async (req, res) => {
 // GET /api/admin/lessons
 export const getLessons = async (req, res) => {
     try {
+        const { deck_id } = req.query;
+        const where = {};
+        if (deck_id) where.deck_id = deck_id;
         const lessons = await Lesson.findAll({
-            include: [{ model: Deck, attributes: ['title', 'hsk_level'] }],
+            where,
+            include: [
+                { model: Deck, attributes: ['title', 'hsk_level'] },
+                { model: Vocabulary, attributes: ['id'] },
+            ],
             order: [['lesson_number', 'ASC']],
         });
-        res.json({ lessons });
+        // Flatten: add wordCount to each lesson
+        const formatted = lessons.map(l => ({
+            ...l.toJSON(),
+            wordCount: l.Vocabularies ? l.Vocabularies.length : 0,
+        }));
+        res.json({ lessons: formatted });
     } catch (error) {
         console.error('Error fetching lessons:', error);
         res.status(500).json({ error: 'Failed to fetch lessons' });
@@ -155,23 +167,25 @@ export const deleteLesson = async (req, res) => {
 // GET /api/admin/vocabulary
 export const getVocabulary = async (req, res) => {
     try {
-        const { page = 1, limit = 10, hsk, search } = req.query;
+        const { page = 1, limit = 10, hsk, search, lesson_id } = req.query;
         const offset = (page - 1) * limit;
         const where = {};
         if (hsk) where.hsk_level = hsk;
+        if (lesson_id) where.lesson_id = lesson_id;
         if (search) {
             where[Op.or] = [
                 { hanzi: { [Op.like]: `%${search}%` } },
                 { pinyin: { [Op.like]: `%${search}%` } },
                 { definition_en: { [Op.like]: `%${search}%` } },
+                { definition_km: { [Op.like]: `%${search}%` } },
             ];
         }
         const { count, rows } = await Vocabulary.findAndCountAll({
             where,
-            include: [{ model: Lesson, attributes: ['title', 'lesson_number'] }],
+            include: [{ model: Lesson, attributes: ['title', 'lesson_number', 'deck_id'] }],
             limit: parseInt(limit),
             offset: parseInt(offset),
-            order: [['id', 'ASC']],
+            order: [['hsk_level', 'ASC'], ['id', 'ASC']],
         });
         res.json({ total: count, page: parseInt(page), vocabulary: rows });
     } catch (error) {
