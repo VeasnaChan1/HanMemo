@@ -1,5 +1,7 @@
 # HanMemo Backend API
 
+https://hanmemo-production.up.railway.app/api-docs/
+
 Spaced Repetition System (SRS) for Mandarin Chinese vocabulary learning.
 
 ## Tech Stack

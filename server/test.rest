@@ -13,11 +13,11 @@
 # POST {{baseUrl}}/auth/register
 # Content-Type: application/json
 
-# {
-#   "name": "Veasna Tester",
-#   "email": "veasna@hanmemo.com",
-#   "password": "securepassword123"
-# }
+{
+  "name": "Veasna Tester",
+  "email": "veasna@hanmemo.com",
+  "password": "securepassword123"
+}
 
 # POST {{baseUrl}}/auth/register
 # Content-Type: application/json
@@ -307,3 +307,31 @@ Content-Type: application/json
 {
     "rating": 3
 }
+
+
+### =====================================
+### ONBOARDING & LEVEL SELECTION TESTS
+### =====================================
+
+### 1. First, get a fresh token (Replace credentials if yours are different)
+POST https://hanmemo-production.up.railway.app/api/auth/register
+Content-Type: application/json
+
+{
+
+    "email": "test@hanmemo.com",
+    "password": "yourpassword"
+}
+
+###
+
+### 2. Simulate User Selecting "HSK 2" on Onboarding Screen
+# -> Replace YOUR_TOKEN_HERE with the token from Step 1
+PATCH https://hanmemo-production.up.railway.app/api/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6ImxlYXJuZXIiLCJpYXQiOjE3ODMzMTUxMzcsImV4cCI6MTc4MzkxOTkzN30.03BnDRZau7gkmoFwnKril0i5QaAbnF0ZQI73LU7w0yk
+Content-Type: application/json
+
+{
+    "hsk_level": 2
+}
+
