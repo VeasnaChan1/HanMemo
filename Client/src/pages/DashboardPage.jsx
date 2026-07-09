@@ -21,6 +21,14 @@ const DashboardPage = () => {
     retentionRate: 0,
   });
 
+  // Redirect admin users away from learner dashboard
+  useEffect(() => {
+    if (user?.role === "admin") {
+      navigate("/admin", { replace: true });
+    }
+  }, [user, navigate]);
+
+
   useEffect(() => {
     const loadDashboardData = async () => {
       if (!token) {
