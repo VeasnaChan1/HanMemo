@@ -1,15 +1,49 @@
+import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button";
+import { progressApi } from "../api/progressApi";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
+
+  const [progress, setProgress] = useState({
+    wordsLearned: 0,
+    streak: user?.streak || 0,
+    retentionRate: 0,
+  });
+
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    hsk_level: user?.hsk_level || 1,
+  });
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const p = await progressApi.getProgress();
+        setProgress({
+          wordsLearned: p.wordsLearned || 0,
+          streak:
+            p.computedStreak || p.streak || p.storedStreak || user?.streak || 0,
+          retentionRate: p.retentionRate || 0,
+        });
+      } catch (err) {
+        // ignore for now
+      }
+    };
+    loadProgress();
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
@@ -60,12 +94,40 @@ const ProfilePage = () => {
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold text-[#1A1A2E]">
-                {user?.name || "User"}
-              </h1>
-              <p className="text-[#9B9BB4]">
-                {user?.email || "user@example.com"}
-              </p>
+              {!editing ? (
+                <>
+                  <h1 className="text-3xl font-bold text-[#1A1A2E]">
+                    {user?.name || "User"}
+                  </h1>
+                  <p className="text-[#9B9BB4]">
+                    {user?.email || "user@example.com"}
+                  </p>
+                </>
+              ) : (
+                <div className="flex flex-col gap-2 w-full max-w-md">
+                  <input
+                    className="border p-2 rounded-lg"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                  <select
+                    className="border p-2 rounded-lg"
+                    value={formData.hsk_level}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        hsk_level: Number(e.target.value),
+                      })
+                    }
+                  >
+                    <option value={1}>HSK 1</option>
+                    <option value={2}>HSK 2</option>
+                    <option value={3}>HSK 3</option>
+                  </select>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -76,20 +138,26 @@ const ProfilePage = () => {
             <h3 className="text-sm font-bold text-[#1A1A2E] mb-2">
               Words Learned
             </h3>
-            <p className="text-4xl font-black text-[#E8453C]">48</p>
+            <p className="text-4xl font-black text-[#E8453C]">
+              {progress.wordsLearned}
+            </p>
           </div>
           <div className="bg-white p-6 rounded-2xl border border-[#E8E8F0] shadow-sm">
             <h3 className="text-sm font-bold text-[#1A1A2E] mb-2">
               Current Streak
             </h3>
-            <p className="text-4xl font-black text-[#E8453C]">7</p>
+            <p className="text-4xl font-black text-[#E8453C]">
+              {progress.streak}
+            </p>
             <p className="text-xs text-[#9B9BB4] mt-1">days</p>
           </div>
           <div className="bg-white p-6 rounded-2xl border border-[#E8E8F0] shadow-sm">
             <h3 className="text-sm font-bold text-[#1A1A2E] mb-2">
               Retention Rate
             </h3>
-            <p className="text-4xl font-black text-green-600">76%</p>
+            <p className="text-4xl font-black text-green-600">
+              {progress.retentionRate}%
+            </p>
           </div>
         </div>
 
@@ -116,17 +184,59 @@ const ProfilePage = () => {
 
         {/* Logout Button */}
         <div className="flex gap-4">
-          <Button
-            variant="outline"
-            className="text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
-            onClick={() => navigate("/dashboard")}
-          >
-            Back to Dashboard
-          </Button>
-          <Button variant="primary" onClick={handleLogout}>
-            Log Out
-          </Button>
+          {!editing ? (
+            <>
+              <Button
+                variant="outline"
+                className="text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
+                onClick={() => setEditing(true)}
+              >
+                Edit Profile
+              </Button>
+              <Button variant="primary" onClick={handleLogout}>
+                Log Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                className="text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
+                onClick={() => setEditing(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={async () => {
+                  setSaving(true);
+                  setMessage("");
+                  try {
+                    await updateProfile({
+                      name: formData.name,
+                      hsk_level: formData.hsk_level,
+                    });
+                    setMessage("Profile updated.");
+                    setEditing(false);
+                  } catch (err) {
+                    setMessage(
+                      err.response?.data?.message ||
+                        "Failed to update profile.",
+                    );
+                  } finally {
+                    setSaving(false);
+                  }
+                }}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save"}
+              </Button>
+            </>
+          )}
         </div>
+        {message && (
+          <div className="mt-3 text-sm text-[#4A4A6A]">{message}</div>
+        )}
       </main>
     </div>
   );

@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button";
+import { useAuth } from "../hooks/useAuth";
+import { authApi } from "../api/authApi";
 
 const LevelSelectionPage = () => {
   const navigate = useNavigate();
-  // State to track which card index is highlighted/selected
-  const [selectedLevel, setSelectedLevel] = useState(1);
+  const { token, user } = useAuth();
+  const [selectedLevel, setSelectedLevel] = useState(user?.hsk_level ?? 1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Content matching your exact Figma text strings
   const levels = [
     {
       id: 1,
@@ -26,9 +29,28 @@ const LevelSelectionPage = () => {
     },
   ];
 
-  const handleSaveLevel = () => {
-    // Navigates straight to the student home dashboard upon confirmation
-    navigate("/dashboard");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [token, navigate]);
+
+  const handleSaveLevel = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      await authApi.updateProfile({ hsk_level: selectedLevel });
+      navigate("/dashboard");
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Unable to save your level right now.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,9 +104,14 @@ const LevelSelectionPage = () => {
           })}
         </div>
 
-        {/* Global Action Confirmation Button */}
-        <Button variant="primary" onClick={handleSaveLevel}>
-          Continue
+        {error && (
+          <div className="mb-4 rounded-xl border border-red-200 bg-[#FFF0EF] p-3 text-sm font-medium text-[#E8453C]">
+            {error}
+          </div>
+        )}
+
+        <Button variant="primary" onClick={handleSaveLevel} disabled={loading}>
+          {loading ? "Saving..." : "Continue"}
         </Button>
       </div>
     </div>

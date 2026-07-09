@@ -5,14 +5,11 @@ import { Brain, Flame, Globe } from "lucide-react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token } = useAuth(); // You can keep this if you plan to use it for other logic later
 
+  // Updated function to strictly navigate to the register page
   const handleGetStarted = () => {
-    if (token) {
-      navigate("/dashboard");
-    } else {
-      navigate("/register");
-    }
+    navigate("/register");
   };
 
   return (

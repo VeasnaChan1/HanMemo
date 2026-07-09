@@ -1,23 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import useFetch from "../hooks/useFetch"; // Commented out temporarily for testing
-import { testLessonsData } from "../data/mockLessons"; // Clear mock data file input target
 import NavBar from "../components/layout/NavBar";
 import BackArrow from "../components/layout/BackArrow";
 import Loader from "../components/common/Loader";
 import LessonCard from "../components/lesson/LessonCard";
 import { BookOpen, GraduationCap } from "lucide-react";
+import { lessonApi } from "../api/lessonApi";
+import { useAuth } from "../hooks/useAuth";
 
 const LessonsPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [lessons, setLessons] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // --- Live Mode Handler Loop (Toggle on when ready) ---
-  // const { data: lessons, loading, error, refetch } = useFetch("/lessons");
+  useEffect(() => {
+    const loadLessons = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        // fetch HSK levels 1 through 4 so frontend shows all four categories
+        const fetchedLessons = await lessonApi.getLessons([1, 2, 3, 4]);
+        setLessons(fetchedLessons);
+      } catch (err) {
+        setError("Unable to load lessons right now.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // --- Test Simulation Variables ---
-  const lessons = testLessonsData;
-  const loading = false;
-  const error = null;
+    loadLessons();
+  }, [user?.hsk_level]);
 
   const handleLessonLaunch = (lessonId) => {
     navigate(`/lessons/${lessonId}/study`);
@@ -39,14 +53,14 @@ const LessonsPage = () => {
                 Learning Paths
               </h1>
               <p className="text-xs font-semibold text-[#9B9BB4] uppercase tracking-wider mt-0.5">
-                Testing responsive states, lock and completion cards
+                Lessons tailored to your selected level
               </p>
             </div>
           </div>
 
           <div className="text-right hidden sm:block">
             <span className="text-xs font-bold bg-[#FFF0EF] text-[#E8453C] px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-              <BookOpen size={12} /> HSK Level 1
+              <BookOpen size={12} /> HSK Level {user?.hsk_level || 1}
             </span>
           </div>
         </div>

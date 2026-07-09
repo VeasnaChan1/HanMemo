@@ -22,7 +22,8 @@ import FlashcardStudyPage from "./pages/FlashcardStudyPage";
 import QuizPage from "./pages/QuizPage";
 import ReviewSessionPage from "./pages/ReviewSessionPage";
 import ProfilePage from "./pages/ProfilePage";
-
+import AdminDashboard from "./pages/AdminDashboard";
+import ProgressPage from "./pages/ProgressPage";
 
 const App = () => {
   return (
@@ -91,6 +92,24 @@ const App = () => {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/progress"
+          element={
+            <ProtectedRoute>
+              <ProgressPage />
             </ProtectedRoute>
           }
         />

@@ -6,7 +6,7 @@ import Button from "../components/common/Button";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -43,15 +43,11 @@ const RegisterPage = () => {
     try {
       setLoading(true);
 
-      const mockToken = "mock-jwt-token-from-register";
-      const mockUserData = {
-        id: 2,
+      await register({
         name: formData.fullName,
         email: formData.email,
-        role: "learner",
-      };
-
-      login(mockToken, mockUserData);
+        password: formData.password,
+      });
       navigate("/level-selection");
     } catch (err) {
       setError(

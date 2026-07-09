@@ -25,20 +25,21 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Simulating back-end JWT assignment response
-      const mockToken = "mock-jwt-token-from-login";
-      const mockUserData = {
-        id: 2,
-        name: "Eychhean",
+      const loggedUser = await login({
         email: formData.email,
-        role: "learner",
-      };
-
-      // Log user in globally via AuthContext
-      await login(mockToken, mockUserData);
-      navigate("/level-selection");
+        password: formData.password,
+      });
+      if (loggedUser?.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
-      setError(err.message || "Invalid email or password credentials.");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Invalid email or password credentials.",
+      );
     } finally {
       setLoading(false);
     }

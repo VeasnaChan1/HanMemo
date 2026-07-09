@@ -5,29 +5,62 @@ import Button from "../components/common/Button";
 import Loader from "../components/common/Loader";
 import StreakBadge from "../components/common/StreakBadge";
 import { RefreshCw, Check, ArrowRight } from "lucide-react";
+import { lessonApi } from "../api/lessonApi";
+import { progressApi } from "../api/progressApi";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [lessons, setLessons] = useState([]);
+  const [progress, setProgress] = useState({
+    dueReviews: 0,
+    wordsLearned: 0,
+    completedLessons: 0,
+    streak: user?.streak || 0,
+    retentionRate: 0,
+  });
 
-  // Simulated content initial fetch mapping setup to demonstrate Loader integration
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 600); // Quick state transition smooth render
-    return () => clearTimeout(timer);
-  }, []);
+    const loadDashboardData = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-  // Mock metric counters mirroring your backend database entities and figma layout details
+      try {
+        const [fetchedLessons, fetchedProgress] = await Promise.all([
+          lessonApi.getLessons(),
+          progressApi.getProgress(),
+        ]);
+
+        setLessons(fetchedLessons);
+        setProgress(fetchedProgress);
+      } catch {
+        setProgress((current) => ({ ...current, dueReviews: 0 }));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+  }, [token]);
+
   const dashboardStats = {
-    dueReviews: 14,
-    streakCount: 7,
-    wordsLearned: 48,
-    retentionRate: "76%",
-    currentLesson: "HSK1 - Lesson 3 - Family",
-    completedItems: 12, // User completed items
-    totalItems: 15, // Total items in current lesson path
+    dueReviews: progress.dueReviews || 0,
+    streakCount:
+      progress.computedStreak ||
+      progress.streak ||
+      progress.storedStreak ||
+      user?.streak ||
+      0,
+    wordsLearned: progress.wordsLearned || 0,
+    retentionRate: `${progress.retentionRate || 0}%`,
+    currentLesson: lessons[0]
+      ? `HSK ${user?.hsk_level || 1} - Lesson ${lessons[0].lesson_number} - ${lessons[0].title}`
+      : "No lessons available yet",
+    completedItems: progress.completedLessons || 0,
+    totalItems: lessons.length,
   };
 
   const weekdays = ["S", "M", "T", "W", "T", "F", "S"];
@@ -140,20 +173,33 @@ const DashboardPage = () => {
                 7-day streak
               </h3>
               <div className="flex justify-between items-center max-w-sm">
-                {weekdays.map((day, idx) => (
-                  <div key={idx} className="flex flex-col items-center gap-2">
-                    <span className="text-xs font-semibold text-[#9B9BB4]">
-                      {day}
-                    </span>
-                    {/* Highlighted active consecutive daily target tracking days */}
+                {(progress.streakDays ?? weekdays).map((dayObj, idx) => {
+                  // If backend provided objects use them, otherwise fallback to weekday letters
+                  const isObj = dayObj && dayObj.date !== undefined;
+                  const label = isObj
+                    ? ["S", "M", "T", "W", "T", "F", "S"][
+                        new Date(dayObj.date).getDay()
+                      ]
+                    : dayObj;
+                  const active = isObj ? dayObj.active : idx < 6;
+
+                  return (
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all
-                      ${idx < 6 ? "bg-[#E8453C] text-white" : "bg-gray-100 text-[#9B9BB4]"}`}
+                      key={isObj ? dayObj.date : idx}
+                      className="flex flex-col items-center gap-2"
                     >
-                      <Check size={14} strokeWidth={3} />
+                      <span className="text-xs font-semibold text-[#9B9BB4]">
+                        {label}
+                      </span>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all
+                          ${active ? "bg-[#E8453C] text-white" : "bg-gray-100 text-[#9B9BB4]"}`}
+                      >
+                        <Check size={14} strokeWidth={3} />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -213,7 +259,11 @@ const DashboardPage = () => {
             <Button
               variant="outline"
               className="py-2 text-sm text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
-              onClick={() => navigate("/lessons/study")}
+              onClick={() =>
+                lessons[0]
+                  ? navigate(`/lessons/${lessons[0].id}/study`)
+                  : navigate("/lessons")
+              }
             >
               Continue
             </Button>
