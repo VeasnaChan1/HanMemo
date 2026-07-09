@@ -1,4 +1,4 @@
-import { Lesson, Vocabulary, UserLesson, ReviewSession } from '../models/index.js';
+import { User, Deck, Lesson, Vocabulary, UserLesson, ReviewSession } from '../models/index.js';
 import { generateLessonQuiz } from '../services/quizService.js';
 
 // 1. Implement GET /api/lessons
@@ -48,7 +48,7 @@ export const getLessonById = async (req, res) => {
         const lesson = await Lesson.findByPk(lessonId, {
             include: [{
                 model: Vocabulary,
-                attributes: ['id', 'hanzi', 'pinyin', 'definition_en', 'definition_km'] 
+                attributes: ['id', 'hanzi', 'pinyin', 'definition_en', 'definition_km', 'example_cn', 'example_pinyin', 'example_en', 'example_km']
             }]
         });
 

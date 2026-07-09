@@ -1,84 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BackArrow from "../components/layout/BackArrow";
 import Button from "../components/common/Button";
 import FlashCard from "../components/flashcard/FlashCard";
+import Loader from "../components/common/Loader";
 import { ArrowLeft, ArrowRight, BookOpen, Award } from "lucide-react";
+import { lessonApi } from "../api/lessonApi";
 
 const FlashcardStudyPage = () => {
   const navigate = useNavigate();
-  const { lessonId } = useParams(); // Collect dynamic parameter string from route stack
+  const { lessonId } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [vocabulary, setVocabulary] = useState([]);
+  const [lesson, setLesson] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Mock array simulating real database rows loaded from userLessonApi / hsk1_complete.json
-  const mockLessonVocabulary = [
-    {
-      id: "vocab-1",
-      character: "家",
-      pinyin: "jiā",
-      translationKm: "ផ្ទះ / គ្រួសារ",
-      translationEn: "Family / Home",
-      exampleSentence: "我家有三口人。",
-      exampleSentencePinyin: "Wǒ jiā yǒu sān kǒu rén.",
-    },
-    {
-      id: "vocab-2",
-      character: "爸爸",
-      pinyin: "bàba",
-      translationKm: "ឪពុក / ប៉ា",
-      translationEn: "Father",
-      exampleSentence: "我爸爸是老师。",
-      exampleSentencePinyin: "Wǒ bàba shì lǎoshī.",
-    },
-    {
-      id: "vocab-3",
-      character: "妈妈",
-      pinyin: "māma",
-      translationKm: "ម្តាយ / ម៉ាក់",
-      translationEn: "Mother",
-      exampleSentence: "我妈妈喜欢喝茶。",
-      exampleSentencePinyin: "Wǒ māma xǐhuān hē chá.",
-    },
-  ];
+  useEffect(() => {
+    const loadLesson = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await lessonApi.getLessonById(lessonId);
+        setLesson(data);
+        // Map server fields → FlashCard shape
+        const vocabList = (data?.Vocabularies || data?.vocabulary || []).map((v) => ({
+          id: v.id,
+          character: v.hanzi,
+          pinyin: v.pinyin,
+          translationKm: v.definition_km || "",
+          translationEn: v.definition_en || "",
+          exampleSentence: v.example_cn || "",
+          exampleSentencePinyin: v.example_pinyin || "",
+          exampleTranslationEn: v.example_en || "",
+          exampleTranslationKm: v.example_km || "",
+        }));
+        setVocabulary(vocabList);
+      } catch {
+        setError("Could not load this lesson. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (lessonId) loadLesson();
+  }, [lessonId]);
 
-  const totalCards = mockLessonVocabulary.length;
-  const currentCard = mockLessonVocabulary[currentIndex];
+  const totalCards = vocabulary.length;
+  const currentCard = vocabulary[currentIndex];
 
-  // Safe progressive track percentage bounds calculation
-  const sessionProgress =
-    totalCards > 0 ? ((currentIndex + 1) / totalCards) * 100 : 0;
+  const sessionProgress = totalCards > 0 ? ((currentIndex + 1) / totalCards) * 100 : 0;
 
   const handleNext = () => {
-    if (currentIndex < totalCards - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    }
+    if (currentIndex < totalCards - 1) setCurrentIndex((prev) => prev + 1);
   };
 
   const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
+    if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
   };
 
   const handleFinishStudy = () => {
-    // 1. Get existing items in the review queue or initialize an empty array
-    const existingQueue =
-      JSON.parse(localStorage.getItem("hanmemo_review_queue")) || [];
-
-    // 2. Prevent adding duplicates by checking if the item ID already exists
-    const updatedQueue = [...existingQueue];
-    mockLessonVocabulary.forEach((vocab) => {
-      if (!updatedQueue.some((item) => item.id === vocab.id)) {
-        updatedQueue.push(vocab);
-      }
-    });
-
-    // 3. Save back to localStorage to simulate pushing to the backend database
-    localStorage.setItem("hanmemo_review_queue", JSON.stringify(updatedQueue));
-
-    // 4. Route onward to the quiz or straight to reviews for testing
-    navigate(`/lessons/${lessonId || "3"}/quiz`);
+    navigate(`/lessons/${lessonId}/quiz`);
   };
+
+  const lessonLabel = lesson
+    ? `HSK ${lesson.Deck?.hsk_level || ""} · Lesson ${lesson.lesson_number} — ${lesson.title}`
+    : `Lesson ${lessonId}`;
+
+  if (loading) return <Loader fullScreen />;
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center p-6">
+        <div className="bg-white border border-[#E8E8F0] rounded-2xl p-10 text-center max-w-sm shadow-sm flex flex-col gap-4">
+          <p className="text-sm text-[#9B9BB4]">{error}</p>
+          <Button variant="outline" onClick={() => navigate("/lessons")}>
+            Back to Lessons
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col justify-between text-left">
@@ -93,14 +94,13 @@ const FlashcardStudyPage = () => {
                 Learning New Words
               </h2>
               <p className="text-[11px] font-bold text-[#9B9BB4] uppercase tracking-wider">
-                HSK1 - Lesson 3
+                {lessonLabel}
               </p>
             </div>
           </div>
 
-          {/* Dynamic Tracker Floating Badge Labels */}
           <span className="text-xs font-black bg-gray-100 text-[#4A4A6A] px-3 py-1.5 rounded-xl font-mono">
-            {currentIndex + 1} / {totalCards}
+            {totalCards > 0 ? `${currentIndex + 1} / ${totalCards}` : "—"}
           </span>
         </div>
 
@@ -116,51 +116,54 @@ const FlashcardStudyPage = () => {
       {/* 2. CARD VIEWPORT INTERFACE DISPLAY */}
       <main className="grow flex items-center justify-center px-6 py-8">
         <div className="w-full max-w-md">
-          {currentCard ? (
-            <FlashCard cardData={currentCard} />
-          ) : (
-            <div className="text-center p-6 bg-white border rounded-2xl shadow-sm">
+          {totalCards === 0 ? (
+            <div className="text-center p-8 bg-white border border-[#E8E8F0] rounded-2xl shadow-sm flex flex-col gap-4">
               <p className="text-sm text-[#4A4A6A] font-medium">
-                No vocabulary words found in this section.
+                No vocabulary words found in this lesson yet.
               </p>
+              <Button variant="outline" onClick={() => navigate("/lessons")}>
+                Back to Lessons
+              </Button>
             </div>
-          )}
+          ) : currentCard ? (
+            <FlashCard cardData={currentCard} />
+          ) : null}
         </div>
       </main>
 
       {/* 3. STEPPER CONTROLS ACTION TOOLBAR ROW */}
-      <footer className="w-full bg-white border-t border-[#E8E8F0] px-6 py-5 sticky bottom-0">
-        <div className="max-w-md mx-auto flex justify-between items-center gap-4">
-          {/* Back Step Trigger Button */}
-          <Button
-            variant="outline"
-            disabled={currentIndex === 0}
-            onClick={handlePrevious}
-            className="flex-1 py-3 text-sm flex items-center justify-center gap-2 border-[#E8E8F0] text-[#4A4A6A] hover:bg-gray-50 disabled:opacity-40"
-          >
-            <ArrowLeft size={16} /> Prev
-          </Button>
+      {totalCards > 0 && (
+        <footer className="w-full bg-white border-t border-[#E8E8F0] px-6 py-5 sticky bottom-0">
+          <div className="max-w-md mx-auto flex justify-between items-center gap-4">
+            <Button
+              variant="outline"
+              disabled={currentIndex === 0}
+              onClick={handlePrevious}
+              className="flex-1 py-3 text-sm flex items-center justify-center gap-2 border-[#E8E8F0] text-[#4A4A6A] hover:bg-gray-50 disabled:opacity-40"
+            >
+              <ArrowLeft size={16} /> Prev
+            </Button>
 
-          {/* Forward Step OR Finish Call-to-Action */}
-          {currentIndex === totalCards - 1 ? (
-            <Button
-              variant="primary"
-              onClick={handleFinishStudy}
-              className="flex-1 py-3 text-sm flex items-center justify-center gap-2 bg-green-600 border-green-600 hover:bg-green-700 shadow-sm text-white font-bold"
-            >
-              Take Quiz <Award size={16} />
-            </Button>
-          ) : (
-            <Button
-              variant="primary"
-              onClick={handleNext}
-              className="flex-1 py-3 text-sm flex items-center justify-center gap-2"
-            >
-              Next <ArrowRight size={16} />
-            </Button>
-          )}
-        </div>
-      </footer>
+            {currentIndex === totalCards - 1 ? (
+              <Button
+                variant="primary"
+                onClick={handleFinishStudy}
+                className="flex-1 py-3 text-sm flex items-center justify-center gap-2 bg-green-600 border-green-600 hover:bg-green-700 shadow-sm text-white font-bold"
+              >
+                Take Quiz <Award size={16} />
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={handleNext}
+                className="flex-1 py-3 text-sm flex items-center justify-center gap-2"
+              >
+                Next <ArrowRight size={16} />
+              </Button>
+            )}
+          </div>
+        </footer>
+      )}
     </div>
   );
 };

@@ -3,7 +3,7 @@
  * Full admin console — all data fetched through adminApi service layer.
  * Data hierarchy: Deck (HSK 1-4) → Lessons (many) → Vocabulary (many words)
  */
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { adminApi } from "../api/adminApi";
@@ -29,6 +29,10 @@ import {
   ArrowLeft,
   Loader2,
   RefreshCw,
+  Flame,
+  ChevronDown,
+  ChevronUp,
+  MessageSquareText,
 } from "lucide-react";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
@@ -496,11 +500,14 @@ function VocabularySection({ lessonFilter, onBack }) {
   const [modal, setModal]   = useState(null);
   const [allLessons, setAllLessons] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [expandedRow, setExpandedRow] = useState(null);
   const LIMIT = 10;
 
   const blankForm = () => ({
     lesson_id: lessonFilter?.id || allLessons[0]?.id || "",
-    hanzi: "", pinyin: "", definition_en: "", definition_km: "", hsk_level: lessonFilter?.Deck?.hsk_level || 1,
+    hanzi: "", pinyin: "", definition_en: "", definition_km: "",
+    example_cn: "", example_pinyin: "", example_en: "", example_km: "",
+    hsk_level: lessonFilter?.Deck?.hsk_level || 1,
   });
 
   const load = useCallback(async () => {
@@ -523,23 +530,26 @@ function VocabularySection({ lessonFilter, onBack }) {
     adminApi.getLessons().then(setAllLessons).catch(() => {});
   }, []);
 
-  const openAdd  = () => { setModal({ mode: "add" });   /* form set after allLessons loaded */ };
+  const openAdd  = () => { setModal({ mode: "add" }); };
   const openEdit = (v) => {
     setModal({ mode: "edit", vocab: v,
       form: { lesson_id: v.lesson_id, hanzi: v.hanzi, pinyin: v.pinyin,
                definition_en: v.definition_en || "", definition_km: v.definition_km || "",
+               example_cn: v.example_cn || "", example_pinyin: v.example_pinyin || "",
+               example_en: v.example_en || "", example_km: v.example_km || "",
                hsk_level: v.hsk_level || 1 } });
   };
 
   const [addForm, setAddForm] = useState({
-    lesson_id: "", hanzi: "", pinyin: "", definition_en: "", definition_km: "", hsk_level: 1,
+    lesson_id: "", hanzi: "", pinyin: "", definition_en: "", definition_km: "",
+    example_cn: "", example_pinyin: "", example_en: "", example_km: "", hsk_level: 1,
   });
 
-  // Sync lesson when modal opens for add
   useEffect(() => {
     if (modal?.mode === "add") {
       setAddForm({ lesson_id: lessonFilter?.id || allLessons[0]?.id || "",
         hanzi: "", pinyin: "", definition_en: "", definition_km: "",
+        example_cn: "", example_pinyin: "", example_en: "", example_km: "",
         hsk_level: lessonFilter?.Deck?.hsk_level || 1 });
     }
   }, [modal?.mode, lessonFilter, allLessons]);
@@ -562,7 +572,6 @@ function VocabularySection({ lessonFilter, onBack }) {
   };
 
   const totalPages = Math.ceil(total / LIMIT);
-
   const activeForm  = modal?.mode === "add" ? addForm : modal?.form || {};
   const setActiveForm = modal?.mode === "add"
     ? (fn) => setAddForm(prev => fn(prev))
@@ -606,7 +615,6 @@ function VocabularySection({ lessonFilter, onBack }) {
         </button>
       </div>
 
-      {/* Filters row */}
       <div className="flex gap-3 mb-5 flex-wrap">
         <div className="relative flex-1 min-w-[220px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9B9BB4]" />
@@ -626,7 +634,6 @@ function VocabularySection({ lessonFilter, onBack }) {
         )}
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-2xl border overflow-hidden shadow-sm" style={{ borderColor: BORDER }}>
         <table className="w-full text-sm">
           <thead>
@@ -645,28 +652,74 @@ function VocabularySection({ lessonFilter, onBack }) {
               <tr><td colSpan={7} className="py-10 text-center"><Loader2 size={24} className="animate-spin mx-auto" style={{ color: RED_MID }} /></td></tr>
             ) : vocab.length === 0 ? (
               <Empty text="No vocabulary found. Try adjusting your filters or add words above." />
-            ) : vocab.map(v => (
-              <tr key={v.id} className="border-b hover:bg-[#FFF8F8] transition-colors" style={{ borderColor: BORDER }}>
-                <td className="px-6 py-3 text-xl font-bold" style={{ color: RED_MID }}>{v.hanzi}</td>
-                <td className="px-4 py-3 italic text-[#4A4A6A]">{v.pinyin}</td>
-                <td className="px-4 py-3 text-[#1A1A2E]">{v.definition_en}</td>
-                <td className="px-4 py-3 text-[#4A4A6A]">{v.definition_km || <span className="text-[#ccc]">—</span>}</td>
-                <td className="px-4 py-3"><HskBadge level={v.hsk_level} /></td>
-                <td className="px-4 py-3 text-[#9B9BB4] text-xs">
-                  {v.Lesson ? `L${String(v.Lesson.lesson_number).padStart(2,"0")}: ${v.Lesson.title}` : "—"}
-                </td>
-                <td className="px-6 py-3">
-                  <div className="flex items-center justify-end gap-1">
-                    <ActionBtn icon={Pencil}  color={RED_MID} title="Edit"   onClick={() => openEdit(v)} />
-                    <ActionBtn icon={Trash2}  color="#DC2626" title="Delete" onClick={() => handleDelete(v)} />
-                  </div>
-                </td>
-              </tr>
-            ))}
+            ) : vocab.map(v => {
+              const isExpanded = expandedRow === v.id;
+              const hasExample = v.example_cn || v.example_en || v.example_km;
+              return (
+                <React.Fragment key={v.id}>
+                  <tr className="border-b hover:bg-[#FFF8F8] transition-colors" style={{ borderColor: BORDER }}>
+                    <td className="px-6 py-3 text-xl font-bold" style={{ color: RED_MID }}>{v.hanzi}</td>
+                    <td className="px-4 py-3 italic text-[#4A4A6A]">{v.pinyin}</td>
+                    <td className="px-4 py-3 text-[#1A1A2E]">{v.definition_en}</td>
+                    <td className="px-4 py-3 text-[#4A4A6A]">{v.definition_km || <span className="text-[#ccc]">—</span>}</td>
+                    <td className="px-4 py-3"><HskBadge level={v.hsk_level} /></td>
+                    <td className="px-4 py-3 text-[#9B9BB4] text-xs">
+                      {v.Lesson ? `L${String(v.Lesson.lesson_number).padStart(2,"0")}: ${v.Lesson.title}` : "—"}
+                    </td>
+                    <td className="px-6 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        {hasExample && (
+                          <button
+                            title={isExpanded ? "Hide examples" : "View examples"}
+                            onClick={() => setExpandedRow(isExpanded ? null : v.id)}
+                            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+                            style={{ color: isExpanded ? RED_MID : "#9B9BB4" }}
+                          >
+                            <MessageSquareText size={15} />
+                          </button>
+                        )}
+                        <ActionBtn icon={Pencil}  color={RED_MID} title="Edit"   onClick={() => openEdit(v)} />
+                        <ActionBtn icon={Trash2}  color="#DC2626" title="Delete" onClick={() => handleDelete(v)} />
+                      </div>
+                    </td>
+                  </tr>
+                  {isExpanded && (
+                    <tr style={{ borderColor: BORDER }}>
+                      <td colSpan={7} className="px-6 py-4 border-b" style={{ background: "#FFF8F8", borderColor: BORDER }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <MessageSquareText size={14} style={{ color: RED_MID }} />
+                          <span className="text-[11px] font-bold tracking-wider uppercase" style={{ color: RED }}>Example Sentence</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2">
+                          {v.example_cn && (
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-lg font-semibold" style={{ color: RED_MID }}>{v.example_cn}</span>
+                              {v.example_pinyin && <span className="text-xs italic text-[#6B6B8A]">{v.example_pinyin}</span>}
+                            </div>
+                          )}
+                          <div className="flex flex-col gap-1 mt-1">
+                            {v.example_en && (
+                              <div className="flex items-start gap-2">
+                                <span className="text-[10px] font-bold uppercase tracking-wide bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded shrink-0">EN</span>
+                                <span className="text-sm text-[#1A1A2E]">{v.example_en}</span>
+                              </div>
+                            )}
+                            {v.example_km && (
+                              <div className="flex items-start gap-2">
+                                <span className="text-[10px] font-bold uppercase tracking-wide bg-green-100 text-green-700 px-1.5 py-0.5 rounded shrink-0">KM</span>
+                                <span className="text-sm text-[#4A4A6A]">{v.example_km}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
-
-        {/* Pagination */}
         {!loading && total > LIMIT && (
           <div className="flex items-center justify-between px-6 py-4 border-t text-sm text-[#9B9BB4]" style={{ borderColor: BORDER }}>
             <span>
@@ -697,10 +750,9 @@ function VocabularySection({ lessonFilter, onBack }) {
         )}
       </div>
 
-      {/* Add / Edit modal */}
       {modal && (
         <Modal title={modal.mode === "add" ? "Add Vocabulary Word" : `Edit — ${modal.vocab?.hanzi}`} onClose={() => setModal(null)}>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3" style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: "4px" }}>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Hanzi">
                 <input className={inputCls} style={{ borderColor: BORDER }} value={activeForm.hanzi}
@@ -719,6 +771,34 @@ function VocabularySection({ lessonFilter, onBack }) {
               <input className={inputCls} style={{ borderColor: BORDER }} value={activeForm.definition_km}
                 onChange={e => setActiveForm(f => ({ ...f, definition_km: e.target.value }))} placeholder="ជំរាបសួរ" />
             </Field>
+
+            <div className="pt-1">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b" style={{ borderColor: BORDER }}>
+                <MessageSquareText size={13} style={{ color: RED_MID }} />
+                <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: RED }}>Example Sentence</span>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Chinese (Hanzi)">
+                    <input className={inputCls} style={{ borderColor: BORDER }} value={activeForm.example_cn}
+                      onChange={e => setActiveForm(f => ({ ...f, example_cn: e.target.value }))} placeholder="我喜欢学中文。" />
+                  </Field>
+                  <Field label="Pinyin">
+                    <input className={inputCls} style={{ borderColor: BORDER }} value={activeForm.example_pinyin}
+                      onChange={e => setActiveForm(f => ({ ...f, example_pinyin: e.target.value }))} placeholder="Wǒ xǐhuān xué zhōngwén." />
+                  </Field>
+                </div>
+                <Field label="Translation (English)">
+                  <input className={inputCls} style={{ borderColor: BORDER }} value={activeForm.example_en}
+                    onChange={e => setActiveForm(f => ({ ...f, example_en: e.target.value }))} placeholder="I like studying Chinese." />
+                </Field>
+                <Field label="Translation (Khmer)">
+                  <input className={inputCls} style={{ borderColor: BORDER }} value={activeForm.example_km}
+                    onChange={e => setActiveForm(f => ({ ...f, example_km: e.target.value }))} placeholder="ខ្ញុំចូលចិត្តរៀនភាសាចិន。" />
+                </Field>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <Field label="HSK Level">
                 <select className={inputCls} style={{ borderColor: BORDER }} value={activeForm.hsk_level}
@@ -817,7 +897,12 @@ function UsersSection() {
                   </span>
                 </td>
                 <td className="px-4 py-4"><HskBadge level={u.hsk_level} /></td>
-                <td className="px-4 py-4 font-semibold text-[#1A1A2E]">🔥 {u.streak}</td>
+                <td className="px-4 py-4">
+                  <div className="flex items-center gap-1.5 font-semibold text-[#1A1A2E]">
+                    <Flame size={14} className="text-orange-500" />
+                    {u.streak ?? 0}
+                  </div>
+                </td>
                 <td className="px-4 py-4 text-[#9B9BB4] text-xs">
                   {u.created_at ? new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
                 </td>
@@ -924,7 +1009,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#FDF5F5]">
+    <div className="min-h-screen flex bg-[#FAFAFA]">
       {/* ── SIDEBAR ────────────────────────────────────────────────────────── */}
       <aside className="w-44 flex flex-col shrink-0 border-r" style={{ background: SB_BG, borderColor: BORDER }}>
         {/* Logo */}
