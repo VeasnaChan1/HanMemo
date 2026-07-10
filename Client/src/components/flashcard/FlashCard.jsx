@@ -12,6 +12,8 @@ const FlashCard = ({ cardData }) => {
     translationEn = "Hello",
     exampleSentence = "你好！很高兴认识你。",
     exampleSentencePinyin = "Nǐ hǎo! Hěn gāoxìng rènshi nǐ.",
+    exampleTranslationEn = "Hello! Nice to meet you.",
+    exampleTranslationKm = "សួស្តី! ត្រេកអរណាស់ដែលបានស្គាល់អ្នក។",
   } = cardData || {};
 
   return (
@@ -89,6 +91,18 @@ const FlashCard = ({ cardData }) => {
               <p className="text-xs text-[#4A4A6A] italic mt-0.5">
                 {exampleSentencePinyin}
               </p>
+              <div className="mt-1.5 flex flex-col gap-0.5">
+                {exampleTranslationKm && (
+                  <p className="text-xs text-[#4A4A6A]" lang="km">
+                    {exampleTranslationKm}
+                  </p>
+                )}
+                {exampleTranslationEn && (
+                  <p className="text-xs text-[#9B9BB4]">
+                    {exampleTranslationEn}
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>

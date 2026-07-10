@@ -11,7 +11,7 @@ import {
     // Vocabulary CRUD
     getVocabulary, createVocabulary, updateVocabulary, deleteVocabulary,
     // User Management
-    getUsers, deleteUser,
+    getUsers, createUser, updateUser, deleteUser,
 } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -45,6 +45,8 @@ router.delete('/vocabulary/:id', deleteVocabulary);
 
 // User Management Routes
 router.get('/users', getUsers);
+router.post('/users', createUser);
+router.patch('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
 
 export default router;

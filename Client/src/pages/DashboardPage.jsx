@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { lessonApi } from "../api/lessonApi";
 import { progressApi } from "../api/progressApi";
+import LessonCard from "../components/lesson/LessonCard";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -275,75 +276,16 @@ const DashboardPage = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {lessons.slice(0, 6).map((lesson) => {
-                const isCompleted = lesson.isCompleted || false;
-                const isLocked = lesson.isLocked || false;
-                const wordCount =
-                  lesson.wordCount ?? lesson.Vocabularies?.length ?? 0;
-
-                return (
-                  <div
-                    key={lesson.id}
-                    className={`bg-white border rounded-2xl p-5 flex flex-col justify-between h-44 transition-all duration-200
-                      ${isLocked
-                        ? "border-[#E8E8F0] opacity-60 bg-gray-50 select-none"
-                        : "border-[#E8E8F0] hover:border-[#FFE2E0] hover:shadow-md cursor-pointer"
-                      }`}
-                    onClick={() => !isLocked && navigate(`/lessons/${lesson.id}/study`)}
-                  >
-                    <div className="flex justify-between items-start gap-3">
-                      <div className="flex flex-col gap-0.5 min-w-0">
-                        <p className="text-[10px] font-bold text-[#9B9BB4] uppercase tracking-wider">
-                          Lesson {lesson.lesson_number}
-                        </p>
-                        <h4 className="font-bold text-sm text-[#1A1A2E] line-clamp-2 leading-tight">
-                          {lesson.title}
-                        </h4>
-                        <p className="text-[11px] text-[#9B9BB4] mt-0.5">
-                          {wordCount} words
-                        </p>
-                      </div>
-
-                      <div className="shrink-0">
-                        {isLocked ? (
-                          <div className="p-1.5 rounded-xl bg-gray-200 text-gray-400">
-                            <Lock size={15} />
-                          </div>
-                        ) : isCompleted ? (
-                          <div className="p-1.5 rounded-xl bg-green-50 text-green-600">
-                            <CheckCircle2 size={15} fill="currentColor" className="text-white" />
-                          </div>
-                        ) : (
-                          <div className="text-[10px] font-black uppercase tracking-wider bg-[#FFF0EF] text-[#E8453C] px-2 py-1 rounded-lg">
-                            Active
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end mt-2">
-                      {isLocked ? (
-                        <span className="text-[11px] text-gray-400 font-bold">Locked</span>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/lessons/${lesson.id}/study`);
-                          }}
-                          className={`text-xs font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all
-                            ${isCompleted
-                              ? "border-[#E8E8F0] text-[#4A4A6A] hover:bg-gray-50"
-                              : "bg-[#E8453C] border-[#E8453C] text-white hover:bg-[#d63b33] shadow-sm"
-                            }`}
-                        >
-                          {isCompleted ? "Review" : "Study"}
-                          {!isCompleted && <Play size={10} fill="currentColor" />}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+              {lessons.slice(0, 6).map((lesson) => (
+                <LessonCard 
+                  key={lesson.id} 
+                  lesson={{
+                    ...lesson,
+                    wordCount: lesson.wordCount ?? lesson.Vocabularies?.length ?? 0
+                  }} 
+                  onStartLesson={(id) => navigate(`/lessons/${id}/study`)} 
+                />
+              ))}
             </div>
           </div>
         )}

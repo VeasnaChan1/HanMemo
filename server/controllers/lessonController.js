@@ -43,14 +43,19 @@ export const getAllLessons = async (req, res, next) => {
             const isCompleted = ul?.is_completed ?? false;
 
             let isLocked;
-            if (index === 0) {
-                // Lesson 1 of their selected HSK level is unlocked by default
+            if (lesson.lesson_number === 1) {
+                // Lesson 1 of any deck is unlocked by default
                 isLocked = false;
             } else {
-                // Additional lessons unlock according to progression (previous lesson completed)
-                const prevLesson = lessons[index - 1];
-                const prevUl = userLessonMap[prevLesson.id];
-                isLocked = !(prevUl?.is_completed ?? false);
+                // Additional lessons unlock according to progression (previous lesson in same deck completed)
+                const prevLesson = lessons.find(l => l.deck_id === lesson.deck_id && l.lesson_number === lesson.lesson_number - 1);
+                if (prevLesson) {
+                    const prevUl = userLessonMap[prevLesson.id];
+                    isLocked = !(prevUl?.is_completed ?? false);
+                } else {
+                    // If no previous lesson exists in DB, it's unlocked by default
+                    isLocked = false;
+                }
             }
 
             return {
