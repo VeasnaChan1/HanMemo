@@ -9,9 +9,10 @@ const LessonCard = ({ lesson, onStartLesson }) => {
     wordCount = 0,
     isLocked = false,
     isCompleted = false,
-    completedItems = 0,
-    totalItems = 10,
   } = lesson || {};
+
+  const totalItems = wordCount || 0;
+  const completedItems = isCompleted ? totalItems : 0;
 
   // Compute local loading bar configuration tracking parameters
   const progressPercentage =

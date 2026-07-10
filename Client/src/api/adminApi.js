@@ -108,6 +108,18 @@ export const adminApi = {
     return data.users || [];
   },
 
+  // POST /api/admin/users
+  createUser: async (payload) => {
+    const { data } = await API.post("/admin/users", payload);
+    return data.user;
+  },
+
+  // PATCH /api/admin/users/:id
+  updateUser: async (id, payload) => {
+    const { data } = await API.patch(`/admin/users/${id}`, payload);
+    return data.user;
+  },
+
   // DELETE /api/admin/users/:id
   deleteUser: async (id) => {
     const { data } = await API.delete(`/admin/users/${id}`);

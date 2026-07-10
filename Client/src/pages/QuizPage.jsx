@@ -17,6 +17,7 @@ const QuizPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [quizFinished, setQuizFinished] = useState(false);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -55,17 +56,21 @@ const QuizPage = () => {
       setSelectedAnswer(null);
       setIsAnswerChecked(false);
     } else {
-      // Quiz finished, mark lesson complete!
+      // Quiz finished, show score screen and mark complete
+      setIsCompleting(true);
       try {
-        setIsCompleting(true);
         await lessonApi.completeLesson(lessonId);
-        navigate("/dashboard", { replace: true });
       } catch (err) {
         console.error("Failed to complete lesson", err);
-        setError("Failed to record lesson completion. Please try again.");
+      } finally {
         setIsCompleting(false);
+        setQuizFinished(true);
       }
     }
+  };
+
+  const handleFinish = () => {
+    navigate("/lessons", { replace: true });
   };
 
   if (loading) return <Loader fullScreen={true} />;
@@ -94,6 +99,24 @@ const QuizPage = () => {
     );
   }
 
+  if (quizFinished) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-[#E8E8F0] p-8 text-center flex flex-col items-center">
+          <CheckCircle2 className="text-green-500 mb-4" size={64} />
+          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">Quiz Completed!</h1>
+          <p className="text-[#9B9BB4] mb-6">You scored</p>
+          <div className="text-5xl font-black text-[#E8453C] mb-8">
+            {score} / {questions.length}
+          </div>
+          <Button variant="primary" className="w-full py-4 rounded-xl text-lg" onClick={handleFinish}>
+            Back to Lessons
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const currentQuestion = questions[currentQuestionIndex];
   const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
 
@@ -104,7 +127,18 @@ const QuizPage = () => {
         {/* Header & Progress */}
         <div className="px-6 py-4 border-b border-[#E8E8F0] flex flex-col gap-3">
           <div className="flex justify-between items-center text-sm font-bold text-[#4A4A6A]">
-            <span>Quiz</span>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => navigate("/lessons")} 
+                className="hover:bg-gray-100 p-1 rounded-full transition-colors"
+                title="Back to Lessons"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+              </button>
+              <span>Quiz</span>
+            </div>
             <span>{currentQuestionIndex + 1} / {questions.length}</span>
           </div>
           <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
