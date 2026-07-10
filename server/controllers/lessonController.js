@@ -41,6 +41,7 @@ export const getAllLessons = async (req, res, next) => {
         const enriched = lessons.map((lesson, index) => {
             const ul = userLessonMap[lesson.id];
             const isCompleted = ul?.is_completed ?? false;
+            const completedWords = ul?.completed_words ?? 0;
 
             let isLocked;
             if (lesson.lesson_number === 1) {
@@ -66,6 +67,7 @@ export const getAllLessons = async (req, res, next) => {
                 wordCount: lesson.Vocabularies?.length ?? 0,
                 isCompleted,
                 isLocked,
+                completed_words: completedWords,
             };
         });
 
@@ -176,5 +178,33 @@ export const completeLesson = async (req, res) => {
     } catch (error) {
         console.error("Error completing lesson:", error);
         res.status(500).json({ error: "Failed to complete lesson." });
+    }
+};
+
+// 5. POST /api/lessons/:id/progress (Update partial progress)
+export const updateLessonProgress = async (req, res) => {
+    try {
+        const lessonId = req.params.id;
+        const userId = req.user.id;
+        const { completedWords } = req.body;
+
+        if (completedWords === undefined) {
+            return res.status(400).json({ error: "completedWords is required." });
+        }
+
+        const [userLesson, created] = await UserLesson.findOrCreate({
+            where: { user_id: userId, lesson_id: lessonId },
+            defaults: { is_unlocked: true, is_completed: false, completed_words: completedWords }
+        });
+
+        if (!created && userLesson.completed_words < completedWords) {
+            userLesson.completed_words = completedWords;
+            await userLesson.save();
+        }
+
+        res.json({ message: "Progress updated successfully." });
+    } catch (error) {
+        console.error("Error updating lesson progress:", error);
+        res.status(500).json({ error: "Failed to update lesson progress." });
     }
 };

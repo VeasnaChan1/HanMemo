@@ -71,7 +71,7 @@ const LessonsPage = () => {
           }
 
           const totalWords = deckLessons.reduce((acc, l) => acc + (l.wordCount || 0), 0);
-          const completedWords = deckLessons.filter(l => l.isCompleted).reduce((acc, l) => acc + (l.wordCount || 0), 0);
+          const completedWords = deckLessons.reduce((acc, l) => acc + (l.isCompleted ? (l.wordCount || 0) : (l.completed_words || 0)), 0);
           const progressPct = totalWords > 0 ? Math.min(Math.max((completedWords / totalWords) * 100, 0), 100) : 0;
           const allCompleted = deckLessons.every(l => l.isCompleted);
           

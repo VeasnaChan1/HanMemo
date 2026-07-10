@@ -26,4 +26,9 @@ export const lessonApi = {
     const response = await API.post(`/lessons/${lessonId}/complete`);
     return response.data;
   },
+
+  updateLessonProgress: async (lessonId, completedWords) => {
+    const response = await API.post(`/lessons/${lessonId}/progress`, { completedWords });
+    return response.data;
+  },
 };

@@ -9,10 +9,11 @@ const LessonCard = ({ lesson, onStartLesson }) => {
     isLocked = false,
     isCompleted = false,
     lesson_number,
+    completed_words = 0,
   } = lesson || {};
 
   const totalItems = wordCount || 0;
-  const completedItems = isCompleted ? totalItems : 0;
+  const completedItems = isCompleted ? totalItems : completed_words;
 
   const progressPercentage =
     totalItems > 0

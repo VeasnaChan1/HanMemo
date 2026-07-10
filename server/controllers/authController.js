@@ -28,10 +28,13 @@ export const register = async (req, res) => {
     const password_hash = await bcrypt.hash(password, salt);
 
     // 3. Save the new user to the database
+    const today = new Date().toISOString().split('T')[0];
     const newUser = await User.create({
       name,
       email,
-      password_hash
+      password_hash,
+      streak: 1,
+      last_active: today
     });
 
     // 4. Generate a JWT Token
@@ -67,6 +70,26 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials.' });
     }
 
+    // Update streak logic
+    const today = new Date().toISOString().split('T')[0];
+    let newStreak = user.streak || 0;
+
+    if (user.last_active !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      if (user.last_active === yesterday) {
+        newStreak += 1;
+      } else {
+        newStreak = 1;
+      }
+      user.last_active = today;
+      user.streak = newStreak;
+      await user.save();
+    } else if (newStreak === 0) {
+      user.streak = 1;
+      user.last_active = today;
+      await user.save();
+    }
+
     // 3. Generate a JWT Token
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '7d'
@@ -75,7 +98,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       message: 'Login successful!',
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, streak: user.streak }
     });
   } catch (error) {
     console.error(error);

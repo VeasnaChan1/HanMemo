@@ -51,7 +51,11 @@ const FlashcardStudyPage = () => {
   const sessionProgress = totalCards > 0 ? ((currentIndex + 1) / totalCards) * 100 : 0;
 
   const handleNext = () => {
-    if (currentIndex < totalCards - 1) setCurrentIndex((prev) => prev + 1);
+    if (currentIndex < totalCards - 1) {
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      lessonApi.updateLessonProgress(lessonId, nextIndex).catch(console.error);
+    }
   };
 
   const handlePrevious = () => {

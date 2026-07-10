@@ -16,6 +16,10 @@ const UserLesson = sequelize.define('UserLesson', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  completed_words: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
   completed_at: {
     type: DataTypes.DATE,
     allowNull: true,
