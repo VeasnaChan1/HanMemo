@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/layout/NavBar";
 import BackArrow from "../components/layout/BackArrow";
@@ -20,8 +20,8 @@ const LessonsPage = () => {
       setLoading(true);
       setError("");
       try {
-        // fetch HSK levels 1 through 4 so frontend shows all four categories
-        const fetchedLessons = await lessonApi.getLessons([1, 2, 3, 4]);
+        // Fetch all lessons across all decks without passing a specific level
+        const fetchedLessons = await lessonApi.getLessons();
         setLessons(fetchedLessons);
       } catch (err) {
         setError("Unable to load lessons right now.");
@@ -31,19 +31,31 @@ const LessonsPage = () => {
     };
 
     loadLessons();
-  }, [user?.hsk_level]);
+  }, []);
 
   const handleLessonLaunch = (lessonId) => {
     navigate(`/lessons/${lessonId}/study`);
   };
 
+  // Group lessons by HSK Level (Deck)
+  const groupedLessons = useMemo(() => {
+    return lessons.reduce((acc, lesson) => {
+      const level = lesson.Deck?.hsk_level || 1;
+      if (!acc[level]) {
+        acc[level] = [];
+      }
+      acc[level].push(lesson);
+      return acc;
+    }, {});
+  }, [lessons]);
+
+  const hskLevels = Object.keys(groupedLessons).sort((a, b) => Number(a) - Number(b));
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col text-left">
-      {/* Horizontal Desktop Navbar / Bottom Mobile Tracker Layout wrapper */}
       <NavBar />
 
       <main className="max-w-5xl w-full mx-auto px-6 py-8 flex flex-col gap-6 mb-16 md:mb-0">
-        {/* Upper Header Grid Subsections Context */}
         <div className="flex items-center justify-between border-b border-[#E8E8F0] pb-4">
           <div className="flex items-center gap-3">
             <BackArrow fallbackUrl="/dashboard" />
@@ -53,19 +65,31 @@ const LessonsPage = () => {
                 Learning Paths
               </h1>
               <p className="text-xs font-semibold text-[#9B9BB4] uppercase tracking-wider mt-0.5">
-                Lessons tailored to your selected level
+                Explore all available HSK decks
               </p>
             </div>
           </div>
 
           <div className="text-right hidden sm:block">
             <span className="text-xs font-bold bg-[#FFF0EF] text-[#E8453C] px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-              <BookOpen size={12} /> HSK Level {user?.hsk_level || 1}
+              <BookOpen size={12} /> Your Goal: HSK Level {user?.hsk_level || 1}
             </span>
           </div>
         </div>
 
-        {/* Evaluation Conditional Switches Render Matrix */}
+        {/* Legend */}
+        <div className="flex items-center gap-4 text-xs text-[#9B9BB4] font-medium mb-2">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E8453C] inline-block" /> Active
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Completed
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-gray-300 inline-block" /> Locked
+          </span>
+        </div>
+
         {loading ? (
           <div className="flex-grow flex items-center justify-center min-h-[300px]">
             <Loader size="lg" />
@@ -81,14 +105,22 @@ const LessonsPage = () => {
             </h3>
           </div>
         ) : (
-          /* Cards Layout Core Loop Grid System viewport view wrapper */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {lessons.map((lesson) => (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                onStartLesson={handleLessonLaunch}
-              />
+          <div className="flex flex-col gap-10">
+            {hskLevels.map((level) => (
+              <div key={level} className="flex flex-col gap-4">
+                <h2 className="text-lg font-bold text-[#1A1A2E] border-b border-[#E8E8F0] pb-2">
+                  HSK Level {level}
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {groupedLessons[level].map((lesson) => (
+                    <LessonCard
+                      key={lesson.id}
+                      lesson={lesson}
+                      onStartLesson={handleLessonLaunch}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}

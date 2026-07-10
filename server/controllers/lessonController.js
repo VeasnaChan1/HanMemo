@@ -1,21 +1,7 @@
 import { User, Deck, Lesson, Vocabulary, UserLesson, ReviewSession } from '../models/index.js';
 import { generateLessonQuiz } from '../services/quizService.js';
 
-// 1. Implement GET /api/lessons
-// export const getAllLessons = async (req, res) => {
-//     try {
-//         const lessons = await Lesson.findAll({
-//             order: [['lesson_number', 'ASC']] // Keep them in logical order
-//         });
-//         res.json({ lessons });
-//     } catch (error) {
-//         console.error("Error fetching lessons:", error);
-//         res.status(500).json({ error: "Failed to fetch lessons." });
-//     }
-// };
-
-
-// 1. Implement GET /api/lessons (UPDATED for HSK Filtering)
+// 1. Implement GET /api/lessons (UPDATED for HSK Filtering and unlock logic)
 export const getAllLessons = async (req, res, next) => {
     try {
         const userId = req.user.id;
@@ -23,24 +9,69 @@ export const getAllLessons = async (req, res, next) => {
         // Fetch the logged-in user to see what HSK level they selected
         const user = await User.findByPk(userId);
 
-        // Fetch lessons that belong to Decks matching the user's HSK level
+        const hskLevelFilter = req.query.hsk_level ? { hsk_level: req.query.hsk_level } : {};
+
+        // Fetch lessons that belong to Decks, optionally filtering by HSK level
         const lessons = await Lesson.findAll({
             include: [{
                 model: Deck,
-                where: { hsk_level: user.hsk_level },
-                attributes: ['title', 'hsk_level'] // Optional: include deck info
+                where: hskLevelFilter,
+                attributes: ['title', 'hsk_level']
+            }, {
+                model: Vocabulary,
+                attributes: ['id'] // Just need IDs to count words
             }],
-            order: [['lesson_number', 'ASC']]
+            order: [
+                [Deck, 'hsk_level', 'ASC'],
+                ['lesson_number', 'ASC']
+            ]
         });
 
-        res.json({ lessons });
+        // Fetch all UserLesson records for this user (tracks completion & unlock)
+        const userLessons = await UserLesson.findAll({
+            where: { user_id: userId }
+        });
+
+        const userLessonMap = {};
+        for (const ul of userLessons) {
+            userLessonMap[ul.lesson_id] = ul;
+        }
+
+        // Determine lock/complete status using sequential unlock logic:
+        const enriched = lessons.map((lesson, index) => {
+            const ul = userLessonMap[lesson.id];
+            const isCompleted = ul?.is_completed ?? false;
+
+            let isLocked;
+            if (index === 0) {
+                // Lesson 1 of their selected HSK level is unlocked by default
+                isLocked = false;
+            } else {
+                // Additional lessons unlock according to progression (previous lesson completed)
+                const prevLesson = lessons[index - 1];
+                const prevUl = userLessonMap[prevLesson.id];
+                isLocked = !(prevUl?.is_completed ?? false);
+            }
+
+            return {
+                id: lesson.id,
+                title: lesson.title,
+                lesson_number: lesson.lesson_number,
+                Deck: lesson.Deck,
+                wordCount: lesson.Vocabularies?.length ?? 0,
+                isCompleted,
+                isLocked,
+            };
+        });
+
+        res.json({ lessons: enriched });
     } catch (error) {
         console.error("Error fetching lessons:", error);
-        // Using next(error) passes it to your global error handler!
         next(error);
     }
 };
-// 2. Implement GET /api/lessons/:id with vocabulary
+
+// 2. GET /api/lessons/:id with vocabulary
 export const getLessonById = async (req, res) => {
     try {
         const lessonId = req.params.id;
@@ -75,13 +106,15 @@ export const getLessonQuiz = async (req, res) => {
     }
 };
 
-// 4. POST /api/lessons/:id/complete (Includes SRS Injection)
+// 4. POST /api/lessons/:id/complete (Includes SRS Injection and Next Lesson Unlock)
 export const completeLesson = async (req, res) => {
     try {
         const lessonId = req.params.id;
         const userId = req.user.id; 
 
-        const lesson = await Lesson.findByPk(lessonId);
+        const lesson = await Lesson.findByPk(lessonId, {
+            include: [{ model: Deck }]
+        });
         if (!lesson) {
             return res.status(404).json({ error: "Lesson not found." });
         }
@@ -98,23 +131,35 @@ export const completeLesson = async (req, res) => {
             await userLesson.save();
         }
 
-        // 2. >>> THE NEW SRS LOGIC <<<
-        // Fetch all vocabulary for this lesson
+        // 2. Unlock the next lesson in the sequence
+        const nextInDeck = await Lesson.findOne({
+            where: {
+                lesson_number: lesson.lesson_number + 1,
+                deck_id: lesson.deck_id
+            }
+        });
+
+        if (nextInDeck) {
+            await UserLesson.findOrCreate({
+                where: { user_id: userId, lesson_id: nextInDeck.id },
+                defaults: { is_unlocked: true, is_completed: false }
+            });
+        }
+
+        // 3. >>> THE NEW SRS LOGIC <<<
         const vocabularies = await Vocabulary.findAll({ where: { lesson_id: lessonId } });
 
-        // Calculate tomorrow's date for the first review
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        // Inject each word into the review_sessions table
         for (const vocab of vocabularies) {
             await ReviewSession.findOrCreate({
                 where: { user_id: userId, vocab_id: vocab.id },
                 defaults: {
-                    ease_factor: 2.5,       // Default SM-2 starting ease
-                    interval_day: 1,        // Review again in 1 day
+                    ease_factor: 2.5,
+                    interval_day: 1,
                     repetitions: 0,
-                    next_review: tomorrow   // Due tomorrow
+                    next_review: tomorrow
                 }
             });
         }

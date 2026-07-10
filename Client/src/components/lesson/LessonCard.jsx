@@ -7,7 +7,7 @@ const LessonCard = ({ lesson, onStartLesson }) => {
     id,
     title = "Lesson Title",
     wordCount = 0,
-    isLocked = true,
+    isLocked = false,
     isCompleted = false,
     completedItems = 0,
     totalItems = 10,

@@ -16,4 +16,14 @@ export const lessonApi = {
     const response = await API.get(`/lessons/${lessonId}`);
     return response.data.lesson;
   },
+
+  getLessonQuiz: async (lessonId) => {
+    const response = await API.get(`/lessons/${lessonId}/quiz`);
+    return response.data.quiz;
+  },
+
+  completeLesson: async (lessonId) => {
+    const response = await API.post(`/lessons/${lessonId}/complete`);
+    return response.data;
+  },
 };

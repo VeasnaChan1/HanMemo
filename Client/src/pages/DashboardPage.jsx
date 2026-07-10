@@ -17,6 +17,16 @@ import {
 import { lessonApi } from "../api/lessonApi";
 import { progressApi } from "../api/progressApi";
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  // Good morning: 5:00 AM – 11:59 AM
+  if (hour >= 5 && hour < 12) return "Good morning";
+  // Good afternoon: 12:00 PM – 5:59 PM
+  if (hour >= 12 && hour < 18) return "Good afternoon";
+  // Good evening: 6:00 PM – 4:59 AM
+  return "Good evening";
+};
+
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { user, logout, token } = useAuth();
@@ -24,10 +34,12 @@ const DashboardPage = () => {
   const [lessons, setLessons] = useState([]);
   const [progress, setProgress] = useState({
     dueReviews: 0,
+    wordsLearnedToday: 0,
+    reviewedToday: 0,
     wordsLearned: 0,
+    repetitionPercentage: 0,
     completedLessons: 0,
     streak: user?.streak || 0,
-    retentionRate: 0,
   });
 
   // Redirect admin users away from learner dashboard
@@ -44,19 +56,18 @@ const DashboardPage = () => {
         return;
       }
 
-      // Fetch lessons and progress independently so one failure never blocks the other
       try {
-        const fetchedLessons = await lessonApi.getLessons();
+        const fetchedLessons = await lessonApi.getLessons(user?.hsk_level);
         setLessons(fetchedLessons);
       } catch {
-        // lessons stay empty — empty state will render below
+        // Handle gracefully
       }
 
       try {
         const fetchedProgress = await progressApi.getProgress();
-        setProgress(fetchedProgress);
+        setProgress(fetchedProgress || {});
       } catch {
-        // progress stays at defaults, not a fatal error
+        // Handle gracefully
       }
 
       setLoading(false);
@@ -65,18 +76,15 @@ const DashboardPage = () => {
     loadDashboardData();
   }, [token]);
 
-
   const dashboardStats = {
     dueReviews: progress.dueReviews || 0,
-    streakCount:
-      progress.computedStreak ||
-      progress.streak ||
-      progress.storedStreak ||
-      user?.streak ||
-      0,
-    wordsLearned: progress.wordsLearned || 0,
-    retentionRate: `${progress.retentionRate || 0}%`,
-    currentLesson: lessons[0]
+    streakCount: progress.streak || user?.streak || 0,
+    wordsLearnedToday: progress.wordsLearnedToday || 0,
+    reviewedToday: progress.reviewedToday || 0,
+    repetitionPercentage: progress.repetitionPercentage || 0,
+    currentLesson: lessons.find((l) => !l.isCompleted && !l.isLocked)
+      ? `HSK ${user?.hsk_level || 1} - Lesson ${lessons.find((l) => !l.isCompleted && !l.isLocked)?.lesson_number} - ${lessons.find((l) => !l.isCompleted && !l.isLocked)?.title}`
+      : lessons[0]
       ? `HSK ${user?.hsk_level || 1} - Lesson ${lessons[0].lesson_number} - ${lessons[0].title}`
       : "No lessons available yet",
     completedItems: progress.completedLessons || 0,
@@ -97,13 +105,14 @@ const DashboardPage = () => {
       : 0;
 
   // Find first incomplete lesson to use for "Continue"
-  const firstIncompleteLesson = lessons.find((l) => !l.isCompleted) || lessons[0];
+  const continueLesson =
+    lessons.find((l) => !l.isCompleted && !l.isLocked) || lessons[0];
 
   if (loading) return <Loader fullScreen={true} />;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col text-left">
-      {/* INTERNAL CLIENT TOP NAV BAR */}
+      {/* TOP NAV BAR */}
       <nav className="w-full bg-white border-b border-[#E8E8F0] px-6 py-4 sticky top-0 z-40">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div className="font-bold text-2xl text-[#E8453C] tracking-wide">
@@ -147,7 +156,7 @@ const DashboardPage = () => {
         <div className="flex justify-between items-center bg-white p-6 rounded-2xl border border-[#E8E8F0] shadow-sm">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold text-[#1A1A2E]">
-              Good morning, {user?.name || "Learner"}
+              {getGreeting()}, {user?.name || "Learner"} 👋
             </h1>
             <StreakBadge count={dashboardStats.streakCount} />
           </div>
@@ -184,40 +193,27 @@ const DashboardPage = () => {
 
           {/* RIGHT: TRACKING METRICS */}
           <div className="flex flex-col gap-6">
-            {/* WEEKLY ACTIVITY */}
+            {/* WEEKLY ACTIVITY / QUICK STATS */}
             <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl shadow-sm">
-              <h3 className="text-sm font-bold text-[#1A1A2E] mb-3">7-day streak</h3>
-              <div className="flex justify-between items-center max-w-sm">
-                {(progress.streakDays ?? weekdays).map((dayObj, idx) => {
-                  const isObj = dayObj && dayObj.date !== undefined;
-                  const label = isObj
-                    ? ["S", "M", "T", "W", "T", "F", "S"][new Date(dayObj.date).getDay()]
-                    : dayObj;
-                  const active = isObj ? dayObj.active : idx < 6;
-                  return (
-                    <div key={isObj ? dayObj.date : idx} className="flex flex-col items-center gap-2">
-                      <span className="text-xs font-semibold text-[#9B9BB4]">{label}</span>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${active ? "bg-[#E8453C] text-white" : "bg-gray-100 text-[#9B9BB4]"}`}>
-                        <Check size={14} strokeWidth={3} />
-                      </div>
-                    </div>
-                  );
-                })}
+              <h3 className="text-sm font-bold text-[#1A1A2E] mb-3">Today's Progress</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-[#FAFAFA] p-4 rounded-xl text-center border border-[#E8E8F0]">
+                  <p className="text-2xl font-black text-[#1A1A2E]">{dashboardStats.wordsLearnedToday}</p>
+                  <p className="text-xs text-[#4A4A6A] font-medium mt-0.5">Words learned today</p>
+                </div>
+                <div className="bg-[#FAFAFA] p-4 rounded-xl text-center border border-[#E8E8F0]">
+                  <p className="text-2xl font-black text-[#1A1A2E]">{dashboardStats.reviewedToday}</p>
+                  <p className="text-xs text-[#4A4A6A] font-medium mt-0.5">Reviews today</p>
+                </div>
               </div>
             </div>
 
-            {/* QUICK STATS */}
+            {/* QUICK STATS - RETENTION */}
             <div className="bg-white border border-[#E8E8F0] p-6 rounded-2xl shadow-sm">
-              <h3 className="text-sm font-bold text-[#1A1A2E] mb-3">Quick States</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-[#FAFAFA] p-4 rounded-xl text-center border border-[#E8E8F0]">
-                  <p className="text-2xl font-black text-[#1A1A2E]">{dashboardStats.wordsLearned}</p>
-                  <p className="text-xs text-[#4A4A6A] font-medium mt-0.5">Words learned</p>
-                </div>
-                <div className="bg-[#FAFAFA] p-4 rounded-xl text-center border border-[#E8E8F0]">
-                  <p className="text-2xl font-black text-green-600">{dashboardStats.retentionRate}</p>
-                  <p className="text-xs text-[#4A4A6A] font-medium mt-0.5">Retention</p>
-                </div>
+              <h3 className="text-sm font-bold text-[#1A1A2E] mb-3">Overall Engagement</h3>
+              <div className="bg-[#FAFAFA] p-4 rounded-xl text-center border border-[#E8E8F0]">
+                <p className="text-2xl font-black text-green-600">{dashboardStats.repetitionPercentage}%</p>
+                <p className="text-xs text-[#4A4A6A] font-medium mt-0.5">Repetition percentage</p>
               </div>
             </div>
           </div>
@@ -247,8 +243,8 @@ const DashboardPage = () => {
               variant="outline"
               className="py-2 text-sm text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
               onClick={() =>
-                firstIncompleteLesson
-                  ? navigate(`/lessons/${firstIncompleteLesson.id}/study`)
+                continueLesson
+                  ? navigate(`/lessons/${continueLesson.id}/study`)
                   : navigate("/lessons")
               }
             >
