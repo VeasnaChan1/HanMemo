@@ -27,7 +27,9 @@ const LessonCard = ({ lesson, onStartLesson }) => {
         ${
           isLocked
             ? "border-[#E8E8F0] opacity-60 bg-gray-50 select-none cursor-not-allowed"
-            : "border-[#E8E8F0] hover:border-[#FFE2E0] hover:shadow-sm cursor-pointer"
+            : isCompleted
+              ? "border-[#FFE2E0] hover:shadow-sm cursor-pointer"
+              : "border-[#E8E8F0] hover:border-[#FFE2E0] hover:shadow-sm cursor-pointer"
         }`}
     >
       {/* Top Details & Header Segment */}
@@ -51,7 +53,9 @@ const LessonCard = ({ lesson, onStartLesson }) => {
               <Lock size={16} />
             </div>
           ) : isCompleted ? (
-            <div className="w-[22px] h-[22px] rounded-full border-[5px] border-[#ECFDF3]" />
+            <div className="text-[11px] font-bold tracking-wide bg-[#e6f4ea] text-[#0d6a37] px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <CheckCircle2 size={14} fill="#0d6a37" color="white" /> Completed
+            </div>
           ) : (
             <div className="text-[10px] font-black uppercase tracking-wider bg-[#FFF0EF] text-[#E8453C] px-2.5 py-1 rounded-lg">
               ACTIVE
@@ -63,16 +67,16 @@ const LessonCard = ({ lesson, onStartLesson }) => {
       <div className="flex flex-col gap-4 mt-6">
         {!isLocked && (
           <div className="w-full flex flex-col gap-1.5">
-            <div className="flex justify-between text-[11px] font-bold text-[#4A4A6A]">
-              <span>Progress</span>
-              <span>
-                {completedItems}/{totalItems}
+            <div className="flex justify-between text-[11px] font-bold">
+              <span className={isCompleted ? "text-[#0d6a37]" : "text-[#4A4A6A]"}>{isCompleted ? "Mastery" : "Progress"}</span>
+              <span className={isCompleted ? "text-[#0d6a37]" : "text-[#4A4A6A]"}>
+                {isCompleted ? "100%" : `${completedItems}/${totalItems}`}
               </span>
             </div>
-            <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500
-                  ${isCompleted ? "bg-green-500" : "bg-[#E8453C]"}`}
+                  ${isCompleted ? "bg-[#0d6a37]" : "bg-[#E8453C]"}`}
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -80,22 +84,27 @@ const LessonCard = ({ lesson, onStartLesson }) => {
         )}
 
         {/* Action Button Controls Row */}
-        <div className="flex justify-end items-center">
+        <div className="w-full mt-1">
           {!isLocked && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onStartLesson && onStartLesson(id);
               }}
-              className={`text-sm font-bold transition-all duration-200 flex items-center gap-1.5 py-2 px-5 rounded-[14px] border
+              className={`w-full text-sm font-bold transition-all duration-200 flex justify-center items-center gap-1.5 py-2.5 rounded-[18px] border
                 ${
                   isCompleted
-                    ? "text-[#4A4A6A] border-[#E8E8F0] bg-white hover:bg-gray-50 hover:border-gray-300"
-                    : "text-white bg-[#E8453C] border-[#E8453C] hover:bg-[#d63b33] shadow-sm"
+                    ? "text-[#5c4033] border-[#FFE2E0] bg-[#eff7f6] hover:bg-[#e4f0ef]"
+                    : "text-white bg-[#E8453C] border-[#E8453C] hover:bg-[#d63b33] shadow-sm rounded-[14px]"
                 }`}
             >
-              {isCompleted ? "Review" : "Study"}
-              {!isCompleted && <Play size={10} fill="currentColor" />}
+              {isCompleted ? (
+                <>Review Again ↻</>
+              ) : (
+                <>
+                  Study <Play size={10} fill="currentColor" />
+                </>
+              )}
             </button>
           )}
         </div>
