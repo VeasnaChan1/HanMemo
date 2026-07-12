@@ -41,11 +41,10 @@ const NavBar = () => {
                 <span
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`flex items-center gap-1.5 transition-colors cursor-pointer pb-1 border-b-2 font-semibold ${
-                    active
-                      ? "text-[#E8453C] border-[#E8453C]"
-                      : "text-[#4A4A6A] border-transparent hover:text-[#E8453C]"
-                  }`}
+                  className={`flex items-center gap-1.5 transition-colors cursor-pointer pb-1 border-b-2 font-semibold ${active
+                    ? "text-[#E8453C] border-[#E8453C]"
+                    : "text-[#4A4A6A] border-transparent hover:text-[#E8453C]"
+                    }`}
                 >
                   <Icon size={16} strokeWidth={active ? 2.5 : 2} />
                   {item.label}
@@ -75,8 +74,11 @@ const NavBar = () => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center flex-1 py-1 gap-0.5 transition-colors cursor-pointer
-                  ${active ? "text-[#E8453C]" : "text-[#9B9BB4] hover:text-[#4A4A6A]"}`}
+                className={`flex flex-col items-center justify-center flex-1 pt-1.5 pb-1 gap-0.5 transition-colors cursor-pointer border-t-2 ${
+                  active 
+                    ? "text-[#E8453C] border-[#E8453C]" 
+                    : "text-[#4A4A6A] border-transparent hover:text-[#E8453C]"
+                }`}
               >
                 <Icon size={20} strokeWidth={active ? 2.5 : 2} />
                 <span className="text-[10px] font-bold tracking-tight">
@@ -88,8 +90,6 @@ const NavBar = () => {
         </div>
       </nav>
 
-      {/* Mobile Margin Spacer Offset to prevent viewport overlay bottom blocking */}
-      <div className="md:hidden h-16" />
     </>
   );
 };

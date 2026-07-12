@@ -119,12 +119,12 @@ const DashboardPage = () => {
       <NavBar />
 
       {/* DASHBOARD GRID CONTENT */}
-      <main className="max-w-5xl w-full mx-auto px-6 py-8 flex flex-col gap-6">
+      <main className="max-w-5xl w-full mx-auto px-6 pt-8 pb-24 md:pb-8 flex flex-col gap-6">
         {/* STUDENT PROFILE SUMMARY HEADER */}
         <div className="flex justify-between items-center bg-white p-6 rounded-2xl border border-[#E8E8F0] shadow-sm">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-[#1A1A2E]">
-              {getGreeting()}, {user?.name || "Learner"}
+            <h1 className="text-2xl font-bold text-[#1A1A2E] truncate max-w-full">
+              {getGreeting()}, {user?.name ? user.name.trim().split(" ").pop() : "Learner"}
             </h1>
             <StreakBadge count={dashboardStats.streakCount} />
           </div>

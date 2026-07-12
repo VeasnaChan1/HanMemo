@@ -99,12 +99,14 @@ const LessonsPage = () => {
                 {isDeckLocked ? (
                   <Lock size={18} className="text-gray-400" />
                 ) : allCompleted ? (
-                  <div className="text-[10px] font-black uppercase tracking-wider bg-green-50 text-green-600 px-2.5 py-1 rounded-lg flex items-center gap-1 shrink-0">
-                    <CheckCircle2 size={12} fill="currentColor" className="text-white" /> Completed
+                  <div className="text-[10px] leading-none font-black uppercase tracking-wider bg-green-50 text-green-600 px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 shrink-0">
+                    <CheckCircle2 size={12} fill="currentColor" className="text-white relative top-[0.5px]" /> 
+                    <span className="pt-[1px]">Completed</span>
                   </div>
                 ) : (
-                  <div className="text-[10px] font-black uppercase tracking-wider bg-[#FFF0EF] text-[#E8453C] px-2.5 py-1 rounded-lg flex items-center gap-1 shrink-0">
-                    <Play size={10} fill="currentColor" /> Active
+                  <div className="text-[10px] leading-none font-black uppercase tracking-wider bg-[#FFF0EF] text-[#E8453C] px-2.5 py-1 rounded-lg flex items-center justify-center gap-1 shrink-0">
+                    <Play size={10} fill="currentColor" className="relative top-[0.5px]" /> 
+                    <span className="pt-[1px]">Active</span>
                   </div>
                 )}
               </div>

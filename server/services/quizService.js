@@ -22,16 +22,18 @@ export const generateLessonQuiz = async (lessonId) => {
             limit: 3
         });
 
+        const getDef = (v) => v.definition_km ? `${v.definition_en} / ${v.definition_km}` : v.definition_en;
+
         // Combine the correct answer with the distractors and shuffle them
         const options = [
-            word.definition_en, 
-            ...distractors.map(d => d.definition_en)
+            getDef(word), 
+            ...distractors.map(d => getDef(d))
         ].sort(() => Math.random() - 0.5); // Simple JavaScript array shuffle
 
         return {
             vocabId: word.id,
             question: `What is the meaning of ${word.hanzi} (${word.pinyin})?`,
-            correctAnswer: word.definition_en,
+            correctAnswer: getDef(word),
             options: options
         };
     }));

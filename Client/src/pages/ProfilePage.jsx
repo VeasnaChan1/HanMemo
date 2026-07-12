@@ -5,6 +5,13 @@ import Button from "../components/common/Button";
 import { progressApi } from "../api/progressApi";
 import NavBar from "../components/layout/NavBar";
 
+const Toggle = ({ defaultChecked }) => (
+  <label className="relative inline-flex items-center cursor-pointer">
+    <input type="checkbox" className="sr-only peer" defaultChecked={defaultChecked} />
+    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#E8453C]"></div>
+  </label>
+);
+
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { user, logout, updateProfile } = useAuth();
@@ -19,15 +26,6 @@ const ProfilePage = () => {
     streak: user?.streak || 0,
     retentionRate: 0,
   });
-
-  const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    hsk_level: user?.hsk_level || 1,
-  });
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const loadProgress = async () => {
@@ -52,7 +50,7 @@ const ProfilePage = () => {
       <NavBar />
 
       {/* Profile Content */}
-      <main className="max-w-5xl w-full mx-auto px-6 py-8 flex flex-col gap-6">
+      <main className="max-w-5xl w-full mx-auto px-6 pt-8 pb-24 md:pb-8 flex flex-col gap-6">
         {/* Profile Header */}
         <div className="bg-white p-8 rounded-2xl border border-[#E8E8F0] shadow-sm">
           <div className="flex items-center gap-6">
@@ -60,40 +58,12 @@ const ProfilePage = () => {
               {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="flex flex-col gap-2">
-              {!editing ? (
-                <>
-                  <h1 className="text-3xl font-bold text-[#1A1A2E]">
-                    {user?.name || "User"}
-                  </h1>
-                  <p className="text-[#9B9BB4]">
-                    {user?.email || "user@example.com"}
-                  </p>
-                </>
-              ) : (
-                <div className="flex flex-col gap-2 w-full max-w-md">
-                  <input
-                    className="border p-2 rounded-lg"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                  />
-                  <select
-                    className="border p-2 rounded-lg"
-                    value={formData.hsk_level}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        hsk_level: Number(e.target.value),
-                      })
-                    }
-                  >
-                    <option value={1}>HSK 1</option>
-                    <option value={2}>HSK 2</option>
-                    <option value={3}>HSK 3</option>
-                  </select>
-                </div>
-              )}
+              <h1 className="text-3xl font-bold text-[#1A1A2E]">
+                {user?.name || "User"}
+              </h1>
+              <p className="text-[#9B9BB4]">
+                {user?.email || "user@example.com"}
+              </p>
             </div>
           </div>
         </div>
@@ -134,75 +104,33 @@ const ProfilePage = () => {
           </h2>
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between py-4 border-b border-[#E8E8F0]">
+              <span className="text-[#4A4A6A]">Language</span>
+              <select className="border border-gray-200 text-[#4A4A6A] rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#E8453C] bg-[#FAFAFA]">
+                <option value="en">English</option>
+                <option value="km">Khmer</option>
+              </select>
+            </div>
+            <div className="flex items-center justify-between py-4 border-b border-[#E8E8F0]">
               <span className="text-[#4A4A6A]">Email Notifications</span>
-              <input type="checkbox" defaultChecked className="w-5 h-5" />
+              <Toggle defaultChecked={true} />
             </div>
             <div className="flex items-center justify-between py-4 border-b border-[#E8E8F0]">
               <span className="text-[#4A4A6A]">Daily Reminders</span>
-              <input type="checkbox" defaultChecked className="w-5 h-5" />
+              <Toggle defaultChecked={true} />
             </div>
             <div className="flex items-center justify-between py-4">
               <span className="text-[#4A4A6A]">Dark Mode</span>
-              <input type="checkbox" className="w-5 h-5" />
+              <Toggle defaultChecked={false} />
             </div>
           </div>
         </div>
 
         {/* Logout Button */}
-        <div className="flex gap-4">
-          {!editing ? (
-            <>
-              <Button
-                variant="outline"
-                className="text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
-                onClick={() => setEditing(true)}
-              >
-                Edit Profile
-              </Button>
-              <Button variant="primary" onClick={handleLogout}>
-                Log Out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                className="text-[#E8453C] border-[#E8453C] hover:bg-[#FFF0EF]"
-                onClick={() => setEditing(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onClick={async () => {
-                  setSaving(true);
-                  setMessage("");
-                  try {
-                    await updateProfile({
-                      name: formData.name,
-                      hsk_level: formData.hsk_level,
-                    });
-                    setMessage("Profile updated.");
-                    setEditing(false);
-                  } catch (err) {
-                    setMessage(
-                      err.response?.data?.message ||
-                        "Failed to update profile.",
-                    );
-                  } finally {
-                    setSaving(false);
-                  }
-                }}
-                disabled={saving}
-              >
-                {saving ? "Saving..." : "Save"}
-              </Button>
-            </>
-          )}
+        <div className="flex justify-end">
+          <Button variant="primary" onClick={handleLogout}>
+            Log Out
+          </Button>
         </div>
-        {message && (
-          <div className="mt-3 text-sm text-[#4A4A6A]">{message}</div>
-        )}
       </main>
     </div>
   );
