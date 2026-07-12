@@ -16,10 +16,12 @@ export const getAllLessons = async (req, res, next) => {
             include: [{
                 model: Deck,
                 where: hskLevelFilter,
+                required: true,  // INNER JOIN on Deck (we need the deck info)
                 attributes: ['title', 'hsk_level']
             }, {
                 model: Vocabulary,
-                attributes: ['id'] // Just need IDs to count words
+                attributes: ['id'], // Just need IDs to count words
+                required: false     // LEFT JOIN — include lessons even if they have no vocabulary yet
             }],
             order: [
                 [Deck, 'hsk_level', 'ASC'],
