@@ -158,8 +158,8 @@ export const completeLesson = async (req, res) => {
         // 3. >>> THE NEW SRS LOGIC <<<
         const vocabularies = await Vocabulary.findAll({ where: { lesson_id: lessonId } });
 
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        // Set next_review to TODAY so words appear immediately in the review queue
+        const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
 
         for (const vocab of vocabularies) {
             await ReviewSession.findOrCreate({
@@ -168,7 +168,7 @@ export const completeLesson = async (req, res) => {
                     ease_factor: 2.5,
                     interval_day: 1,
                     repetitions: 0,
-                    next_review: tomorrow
+                    next_review: today
                 }
             });
         }
