@@ -38,6 +38,9 @@ export const getDueWords = async (req, res) => {
             exampleSentencePinyin: rs.Vocabulary?.example_pinyin || '',
             exampleTranslationEn:  rs.Vocabulary?.example_en     || '',
             exampleTranslationKm:  rs.Vocabulary?.example_km     || '',
+            repetitions:     rs.repetitions,
+            easeFactor:      rs.ease_factor,
+            intervalDays:    rs.interval_day,
         }));
 
         res.json(cards);

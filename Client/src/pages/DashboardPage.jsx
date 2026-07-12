@@ -17,6 +17,7 @@ import {
 import { lessonApi } from "../api/lessonApi";
 import { progressApi } from "../api/progressApi";
 import LessonCard from "../components/lesson/LessonCard";
+import NavBar from "../components/layout/NavBar";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -114,42 +115,8 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col text-left">
       {/* TOP NAV BAR */}
-      <nav className="w-full bg-white border-b border-[#E8E8F0] px-6 py-4 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <div className="font-bold text-2xl text-[#E8453C] tracking-wide">
-            Han<span className="text-[#1A1A2E]">MEMO</span>
-          </div>
-          <div className="flex items-center gap-6 font-medium text-sm text-[#4A4A6A]">
-            <span className="text-[#E8453C] font-bold border-b-2 border-[#E8453C] pb-1 cursor-pointer">
-              Home
-            </span>
-            <span
-              className="hover:text-[#E8453C] transition-colors cursor-pointer"
-              onClick={() => navigate("/lessons")}
-            >
-              Lesson
-            </span>
-            <span
-              className="hover:text-[#E8453C] transition-colors cursor-pointer"
-              onClick={() => navigate("/reviews")}
-            >
-              Review
-            </span>
-            <span
-              className="hover:text-[#E8453C] transition-colors cursor-pointer"
-              onClick={() => navigate("/profile")}
-            >
-              Profile
-            </span>
-            <button
-              onClick={logout}
-              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer"
-            >
-              Log out
-            </button>
-          </div>
-        </div>
-      </nav>
+      {/* TOP NAV BAR */}
+      <NavBar />
 
       {/* DASHBOARD GRID CONTENT */}
       <main className="max-w-5xl w-full mx-auto px-6 py-8 flex flex-col gap-6">
@@ -157,7 +124,7 @@ const DashboardPage = () => {
         <div className="flex justify-between items-center bg-white p-6 rounded-2xl border border-[#E8E8F0] shadow-sm">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold text-[#1A1A2E]">
-              {getGreeting()}, {user?.name || "Learner"} 👋
+              {getGreeting()}, {user?.name || "Learner"}
             </h1>
             <StreakBadge count={dashboardStats.streakCount} />
           </div>

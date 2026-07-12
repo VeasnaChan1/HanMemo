@@ -1,6 +1,6 @@
 /* RatingButtons component */
 
-const RatingButtons = ({ onRate, disabled = false }) => {
+const RatingButtons = ({ onRate, disabled = false, intervals = {} }) => {
   // Define standard SM-2 rating quality buttons configurations
   const buttons = [
     {
@@ -12,7 +12,7 @@ const RatingButtons = ({ onRate, disabled = false }) => {
     {
       value: 2,
       label: "Hard",
-      subLabel: "Hesited",
+      subLabel: "Hesitated",
       colorClass:
         "border-orange-200 text-orange-600 hover:bg-orange-50 focus:bg-orange-50",
     },
@@ -39,10 +39,15 @@ const RatingButtons = ({ onRate, disabled = false }) => {
           key={btn.value}
           disabled={disabled}
           onClick={() => onRate && onRate(btn.value)}
-          className={`flex flex-col items-center justify-center py-2.5 rounded-xl border bg-white transition-all duration-150 shadow-sm focus:outline-none font-medium text-left cursor-pointer
+          className={`relative flex flex-col items-center justify-center py-2.5 rounded-xl border bg-white transition-all duration-150 shadow-sm focus:outline-none font-medium text-left cursor-pointer
             ${disabled ? "opacity-40 cursor-not-allowed select-none" : "hover:scale-[1.02] active:scale-[0.98]"}
             ${btn.colorClass}`}
         >
+          {intervals[btn.value] && (
+            <span className="absolute -top-3 bg-white px-1.5 text-[10px] font-bold text-gray-500 rounded-full border shadow-sm">
+              {intervals[btn.value]}
+            </span>
+          )}
           <span className="text-sm font-bold tracking-tight">{btn.label}</span>
           <span className="text-[10px] opacity-75 font-semibold mt-0.5">
             {btn.subLabel}

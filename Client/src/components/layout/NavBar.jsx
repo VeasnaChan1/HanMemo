@@ -34,19 +34,24 @@ const NavBar = () => {
 
           {/* Nav Actions Row */}
           <div className="flex items-center gap-6 font-medium text-sm">
-            {navItems.map((item) => (
-              <span
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`transition-colors cursor-pointer pb-1 border-b-2 font-semibold ${
-                  isActive(item.path)
-                    ? "text-[#E8453C] border-[#E8453C]"
-                    : "text-[#4A4A6A] border-transparent hover:text-[#E8453C]"
-                }`}
-              >
-                {item.label}
-              </span>
-            ))}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return (
+                <span
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`flex items-center gap-1.5 transition-colors cursor-pointer pb-1 border-b-2 font-semibold ${
+                    active
+                      ? "text-[#E8453C] border-[#E8453C]"
+                      : "text-[#4A4A6A] border-transparent hover:text-[#E8453C]"
+                  }`}
+                >
+                  <Icon size={16} strokeWidth={active ? 2.5 : 2} />
+                  {item.label}
+                </span>
+              );
+            })}
             <button
               onClick={logout}
               className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1.5"

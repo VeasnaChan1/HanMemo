@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import AudioButton from "../flashcard/AudioButton";
 import RatingButtons from "./RatingButtons";
+import { calculateNextReviewIntervals } from "../../utils/srsUtils";
 
 const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
   const [showAnswer, setShowAnswer] = useState(false);
@@ -16,7 +17,14 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
     exampleSentencePinyin = "",
     exampleTranslationEn = "",
     exampleTranslationKm = "",
+    repetitions = 0,
+    easeFactor = 2.5,
+    intervalDays = 1,
   } = reviewData || {};
+
+  const intervals = useMemo(() => {
+    return calculateNextReviewIntervals({ repetitions, easeFactor, intervalDays });
+  }, [repetitions, easeFactor, intervalDays]);
 
   // Automatically hide answers when a new word is requested
   useEffect(() => {
@@ -115,7 +123,7 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
       <div
         className={`transition-opacity duration-200 ${showAnswer ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       >
-        <RatingButtons onRate={handleRatingSubmission} disabled={!showAnswer} />
+        <RatingButtons onRate={handleRatingSubmission} disabled={!showAnswer} intervals={intervals} />
       </div>
     </div>
   );
