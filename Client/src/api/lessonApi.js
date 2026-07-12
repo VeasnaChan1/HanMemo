@@ -1,12 +1,11 @@
 import API from "./axios";
 
 export const lessonApi = {
-  getLessons: async (levels) => {
-    // levels: optional array or comma-separated string like "1,2,3,4"
+  getLessons: async (hskLevel) => {
+    // hskLevel: optional number — must match backend's req.query.hsk_level
     const params = {};
-    if (levels) {
-      if (Array.isArray(levels)) params.levels = levels.join(",");
-      else params.levels = String(levels);
+    if (hskLevel) {
+      params.hsk_level = String(hskLevel);
     }
     const response = await API.get("/lessons", { params });
     return response.data.lessons || [];
