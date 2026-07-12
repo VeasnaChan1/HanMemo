@@ -14,6 +14,8 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
     translationEn = "",
     exampleSentence = "",
     exampleSentencePinyin = "",
+    exampleTranslationEn = "",
+    exampleTranslationKm = "",
   } = reviewData || {};
 
   // Automatically hide answers when a new word is requested
@@ -82,12 +84,28 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
               <span className="text-[10px] text-[#9B9BB4] font-bold uppercase tracking-wider block mb-0.5">
                 Example Usage
               </span>
-              <p className="text-sm font-semibold text-[#1A1A2E]">
-                {exampleSentence}
-              </p>
-              <p className="text-xs text-[#4A4A6A] italic mt-0.5">
-                {exampleSentencePinyin}
-              </p>
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-[#1A1A2E]">
+                    {exampleSentence}
+                  </p>
+                  <p className="text-xs text-[#4A4A6A] italic mt-0.5">
+                    {exampleSentencePinyin}
+                  </p>
+                </div>
+                <div className="flex-1 text-right">
+                  {exampleTranslationKm && (
+                    <p className="text-xs text-[#1A1A2E] font-bold" lang="km">
+                      {exampleTranslationKm}
+                    </p>
+                  )}
+                  {exampleTranslationEn && (
+                    <p className="text-xs text-[#4A4A6A] mt-0.5">
+                      {exampleTranslationEn}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ReviewCard from "../components/review/ReviewCard";
 import BackArrow from "../components/layout/BackArrow";
+import NavBar from "../components/layout/NavBar";
 import Loader from "../components/common/Loader";
 import { BookOpen } from "lucide-react";
 import { reviewApi } from "../api/reviewApi";
@@ -92,10 +93,12 @@ const ReviewSessionPage = () => {
   const progressPercent = ((currentIndex + 1) / queue.length) * 100;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col justify-between py-6 px-4">
-      {/* HEADER SECTION WITH PROGRESS TRACKER */}
-      <div className="w-full max-w-md mx-auto flex items-center justify-between mb-4">
-        <BackArrow fallbackUrl="/dashboard" />
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
+      <NavBar />
+      <div className="flex flex-col justify-between grow py-6 px-4">
+        {/* HEADER SECTION WITH PROGRESS TRACKER */}
+        <div className="w-full max-w-md mx-auto flex items-center justify-between mb-4">
+          <BackArrow fallbackUrl="/dashboard" />
 
         <div className="text-right">
           <span className="text-xs font-bold text-[#4A4A6A] flex items-center gap-1 justify-end">
@@ -118,12 +121,13 @@ const ReviewSessionPage = () => {
         />
       </div>
 
-      {/* BOTTOM FOOTER TIP */}
-      <div className="w-full max-w-md mx-auto text-center mt-4">
-        <span className="text-[11px] text-[#9B9BB4] font-medium tracking-wide">
-          Tip: Tap "Show Answer" to reveal meaning details and make your score
-          rating selection.
-        </span>
+        {/* BOTTOM FOOTER TIP */}
+        <div className="w-full max-w-md mx-auto text-center mt-4 mb-16 md:mb-0">
+          <span className="text-[11px] text-[#9B9BB4] font-medium tracking-wide">
+            Tip: Tap "Show Answer" to reveal meaning details and make your score
+            rating selection.
+          </span>
+        </div>
       </div>
     </div>
   );
