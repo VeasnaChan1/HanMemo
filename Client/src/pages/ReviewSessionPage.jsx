@@ -2,40 +2,67 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ReviewCard from "../components/review/ReviewCard";
 import BackArrow from "../components/layout/BackArrow";
+import Loader from "../components/common/Loader";
 import { BookOpen } from "lucide-react";
+import { reviewApi } from "../api/reviewApi";
 
 const ReviewSessionPage = () => {
   const navigate = useNavigate();
   const [queue, setQueue] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Load the simulator queue from localStorage on mount
+  // Fetch due-review cards from the real API on mount
   useEffect(() => {
-    const savedQueue =
-      JSON.parse(localStorage.getItem("hanmemo_review_queue")) || [];
-    setQueue(savedQueue);
+    const loadDueWords = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const cards = await reviewApi.getDueWords();
+        setQueue(cards || []);
+      } catch {
+        setError("Could not load your review queue. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDueWords();
   }, []);
 
-  const handleScoreSubmitted = ({ vocabularyId, rating }) => {
-    console.log(
-      `Simulating SRS Submission - Vocab ID: ${vocabularyId}, Difficulty Rating Score: ${rating}`,
-    );
+  const handleScoreSubmitted = async ({ reviewSessionId, rating }) => {
+    // Submit rating to the backend (fire-and-forget; don't block UI)
+    reviewApi.submitCardRating(reviewSessionId, rating).catch(console.error);
 
-    // Standard SM-2 description simulation log
-    // Rating 1 = Forgot/Again, 2 = Hesitated/Hard, 3 = Correct/Good, 4 = Perfect/Easy
-
-    // Move to the next flashcard index
     const nextIndex = currentIndex + 1;
     setCurrentIndex(nextIndex);
 
-    // If we have finished all cards in the queue, clear localStorage or remove reviewed items
     if (nextIndex >= queue.length) {
-      localStorage.setItem("hanmemo_review_queue", JSON.stringify([])); // Clear simulated queue
       navigate("/review-complete");
     }
   };
 
-  // Handle case where there are no cards currently pushed for review
+  // ── Loading state ──────────────────────────────────────────────────────────
+  if (loading) return <Loader fullScreen />;
+
+  // ── Error state ────────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center px-6 text-center">
+        <div className="bg-white p-8 rounded-2xl border border-[#E8E8F0] shadow-sm max-w-md flex flex-col gap-4">
+          <p className="text-sm text-[#9B9BB4]">{error}</p>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="w-full bg-[#E8453C] text-white py-2.5 rounded-xl font-bold hover:bg-[#d63b32] transition-colors cursor-pointer"
+          >
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Empty queue ────────────────────────────────────────────────────────────
   if (queue.length === 0) {
     return (
       <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center px-6 text-center">
@@ -58,7 +85,7 @@ const ReviewSessionPage = () => {
     );
   }
 
-  // Safety guard against array out of bounds rendering
+  // Safety guard against array out-of-bounds rendering
   if (currentIndex >= queue.length) return null;
 
   const currentCard = queue[currentIndex];

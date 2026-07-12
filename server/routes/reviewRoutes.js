@@ -1,14 +1,16 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { rateReview } from '../controllers/reviewController.js';
+import { getDueWords, rateReview } from '../controllers/reviewController.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import { validateRequest } from '../middlewares/validateRequest.js';
 
 const router = express.Router();
 router.use(authenticate);
 
+// Route: GET /api/reviews/due
+router.get('/due', getDueWords);
+
 // Route: POST /api/reviews/rate
-// We add validation rules in an array before the controller!
 router.post('/rate', 
     [
         body('reviewSessionId').isInt().withMessage('Review Session ID must be an integer.'),

@@ -79,6 +79,10 @@ const App = () => {
 
         {/* Active Spaced Repetition (SRS) live evaluation loop engine layout */}
         <Route
+          path="/reviews"
+          element={<Navigate to="/reviews/session" replace />}
+        />
+        <Route
           path="/reviews/session"
           element={
             <ProtectedRoute>

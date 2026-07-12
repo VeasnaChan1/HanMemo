@@ -1,5 +1,51 @@
-import { ReviewSession } from '../models/index.js';
+import { Op } from 'sequelize';
+import { ReviewSession, Vocabulary } from '../models/index.js';
 import { calculateNextReview } from '../services/srsService.js';
+
+// GET /api/reviews/due
+export const getDueWords = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+
+        const dueReviews = await ReviewSession.findAll({
+            where: {
+                user_id: userId,
+                next_review: { [Op.lte]: today }
+            },
+            include: [{
+                model: Vocabulary,
+                as: 'Vocabulary',
+                attributes: [
+                    'id', 'hanzi', 'pinyin',
+                    'definition_en', 'definition_km',
+                    'example_cn', 'example_pinyin',
+                    'example_en', 'example_km'
+                ]
+            }],
+            order: [['next_review', 'ASC']]
+        });
+
+        // Map to the shape ReviewCard expects
+        const cards = dueReviews.map(rs => ({
+            reviewSessionId: rs.id,
+            id:              rs.Vocabulary?.id,
+            character:       rs.Vocabulary?.hanzi        || '',
+            pinyin:          rs.Vocabulary?.pinyin       || '',
+            translationEn:   rs.Vocabulary?.definition_en || '',
+            translationKm:   rs.Vocabulary?.definition_km || '',
+            exampleSentence:       rs.Vocabulary?.example_cn     || '',
+            exampleSentencePinyin: rs.Vocabulary?.example_pinyin || '',
+            exampleTranslationEn:  rs.Vocabulary?.example_en     || '',
+            exampleTranslationKm:  rs.Vocabulary?.example_km     || '',
+        }));
+
+        res.json(cards);
+    } catch (error) {
+        console.error('Error fetching due reviews:', error);
+        res.status(500).json({ error: 'Failed to fetch due reviews.', details: error.message });
+    }
+};
 
 // POST /api/reviews/rate
 export const rateReview = async (req, res) => {

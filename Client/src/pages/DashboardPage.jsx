@@ -86,8 +86,8 @@ const DashboardPage = () => {
     currentLesson: lessons.find((l) => !l.isCompleted && !l.isLocked)
       ? `HSK ${user?.hsk_level || 1} - Lesson ${lessons.find((l) => !l.isCompleted && !l.isLocked)?.lesson_number} - ${lessons.find((l) => !l.isCompleted && !l.isLocked)?.title}`
       : lessons[0]
-      ? `HSK ${user?.hsk_level || 1} - Lesson ${lessons[0].lesson_number} - ${lessons[0].title}`
-      : "No lessons available yet",
+        ? `HSK ${user?.hsk_level || 1} - Lesson ${lessons[0].lesson_number} - ${lessons[0].title}`
+        : "No lessons available yet",
     completedItems: progress.completedLessons || 0,
     totalItems: lessons.length,
   };
@@ -97,12 +97,12 @@ const DashboardPage = () => {
   const progressPercentage =
     dashboardStats.totalItems > 0
       ? Math.min(
-          Math.max(
-            (dashboardStats.completedItems / dashboardStats.totalItems) * 100,
-            0,
-          ),
-          100,
-        )
+        Math.max(
+          (dashboardStats.completedItems / dashboardStats.totalItems) * 100,
+          0,
+        ),
+        100,
+      )
       : 0;
 
   // Find first incomplete lesson to use for "Continue"
@@ -131,7 +131,7 @@ const DashboardPage = () => {
             </span>
             <span
               className="hover:text-[#E8453C] transition-colors cursor-pointer"
-              onClick={() => navigate("/reviews/session")}
+              onClick={() => navigate("/reviews")}
             >
               Review
             </span>
@@ -185,7 +185,7 @@ const DashboardPage = () => {
 
             <Button
               variant="primary"
-              onClick={() => navigate("/reviews/session")}
+              onClick={() => navigate("/reviews")}
               className="flex items-center justify-center gap-2"
             >
               Start Review <ArrowRight size={16} />
@@ -277,13 +277,13 @@ const DashboardPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {lessons.slice(0, 6).map((lesson) => (
-                <LessonCard 
-                  key={lesson.id} 
+                <LessonCard
+                  key={lesson.id}
                   lesson={{
                     ...lesson,
                     wordCount: lesson.wordCount ?? lesson.Vocabularies?.length ?? 0
-                  }} 
-                  onStartLesson={(id) => navigate(`/lessons/${id}/study`)} 
+                  }}
+                  onStartLesson={(id) => navigate(`/lessons/${id}/study`)}
                 />
               ))}
             </div>

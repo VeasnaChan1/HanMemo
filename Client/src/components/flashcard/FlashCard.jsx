@@ -6,14 +6,14 @@ const FlashCard = ({ cardData }) => {
 
   // Mock safety values fallback structure
   const {
-    character = "你好",
-    pinyin = "nǐ hǎo",
-    translationKm = "សួស្តី",
-    translationEn = "Hello",
-    exampleSentence = "你好！很高兴认识你。",
-    exampleSentencePinyin = "Nǐ hǎo! Hěn gāoxìng rènshi nǐ.",
-    exampleTranslationEn = "Hello! Nice to meet you.",
-    exampleTranslationKm = "សួស្តី! ត្រេកអរណាស់ដែលបានស្គាល់អ្នក។",
+    character = "",
+    pinyin = "",
+    translationKm = "",
+    translationEn = "",
+    exampleSentence = "",
+    exampleSentencePinyin = "",
+    exampleTranslationEn = "",
+    exampleTranslationKm = "",
   } = cardData || {};
 
   return (

@@ -6,13 +6,14 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
   const [showAnswer, setShowAnswer] = useState(false);
 
   const {
+    reviewSessionId,
     id,
-    character = "家",
-    pinyin = "jiā",
-    translationKm = "ផ្ទះ / គ្រួសារ",
-    translationEn = "Family / Home",
-    exampleSentence = "我家有三口人。",
-    exampleSentencePinyin = "Wǒ jiā yǒu sān kǒu rén.",
+    character = "",
+    pinyin = "",
+    translationKm = "",
+    translationEn = "",
+    exampleSentence = "",
+    exampleSentencePinyin = "",
   } = reviewData || {};
 
   // Automatically hide answers when a new word is requested
@@ -23,11 +24,13 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
   const handleRatingSubmission = (scoreValue) => {
     if (onScoreSubmitted) {
       onScoreSubmitted({
+        reviewSessionId,
         vocabularyId: id,
         rating: scoreValue,
       });
     }
   };
+
 
   return (
     <div className="w-full max-w-md mx-auto flex flex-col gap-5">
