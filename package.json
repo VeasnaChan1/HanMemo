@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server/app/index.js",
     "seed": "node server/scripts/seed.js",
+    "seed:hsk2-3": "node server/scripts/seed_hsk2_hsk3.js",
     "dev": "node server/app/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -36,15 +36,15 @@ const seedDatabase = async () => {
     for (let i = 0; i < vocabList.length; i += WORDS_PER_LESSON) {
       // Grab the next 10 words
       const lessonChunk = vocabList.slice(i, i + WORDS_PER_LESSON);
-      
+
       // Calculate the current lesson number (1, 2, 3, etc.)
       const lessonNumber = Math.floor(i / WORDS_PER_LESSON) + 1;
 
       // Create a new Lesson in the database for this chunk
-      const newLesson = await Lesson.create({ 
-        deck_id: deck.id, 
-        title: `HSK 1 - Lesson ${lessonNumber}`, 
-        lesson_number: lessonNumber 
+      const newLesson = await Lesson.create({
+        deck_id: deck.id,
+        title: `HSK 1 - Lesson ${lessonNumber}`,
+        lesson_number: lessonNumber
       });
 
       // Add the missing required fields to each word in this specific chunk
@@ -57,7 +57,7 @@ const seedDatabase = async () => {
 
       // Insert these 10 words into the database
       await Vocabulary.bulkCreate(vocabDataToInsert);
-      
+
       totalWordsAdded += vocabDataToInsert.length;
       console.log(`Created Lesson ${lessonNumber} with ${vocabDataToInsert.length} words.`);
     }

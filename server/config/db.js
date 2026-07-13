@@ -9,13 +9,13 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Use internal Railway address when on Railway, external when local
-const host = process.env.NODE_ENV === 'production' 
+const host = (process.env.NODE_ENV === 'production' && process.env.RAILWAY_ENVIRONMENT)
   ? 'mysql.railway.internal'  // ← Internal Railway network
   : (process.env.DB_HOST || 'localhost');  // ← Local/external
 
-const port = process.env.NODE_ENV === 'production'
+const port = (process.env.NODE_ENV === 'production' && process.env.RAILWAY_ENVIRONMENT)
   ? 3306  // ← Railway internal uses standard port
-  : (process.env.MYSQLPORT || 3306);
+  : (process.env.MYSQLPORT || process.env.PORT || 3306);
 
 const sequelize = new Sequelize(
   process.env.MYSQLDATABASE || process.env.DB_NAME || 'HanMemo',
