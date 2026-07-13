@@ -1,6 +1,7 @@
-create database hanmemo;
-use hanmemo;
-CREATE TABLE users (
+CREATE DATABASE IF NOT EXISTS HanMemo;
+USE HanMemo;
+
+CREATE TABLE Users (
   id              INT AUTO_INCREMENT PRIMARY KEY,
   name            VARCHAR(100) NOT NULL,
   email           VARCHAR(150) NOT NULL UNIQUE,
@@ -13,7 +14,7 @@ CREATE TABLE users (
   created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE decks (
+CREATE TABLE Decks (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   title       VARCHAR(100) NOT NULL,
   hsk_level   TINYINT NOT NULL,
@@ -21,7 +22,7 @@ CREATE TABLE decks (
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE lessons (
+CREATE TABLE Lessons (
   id                      INT AUTO_INCREMENT PRIMARY KEY,
   deck_id                 INT NOT NULL,
   title                   VARCHAR(100) NOT NULL,
@@ -29,10 +30,10 @@ CREATE TABLE lessons (
   is_unlocked_by_default  BOOLEAN DEFAULT FALSE,
   created_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY (deck_id) REFERENCES decks(id) ON DELETE CASCADE
+  FOREIGN KEY (deck_id) REFERENCES Decks(id) ON DELETE CASCADE
 );
 
-CREATE TABLE vocabulary (
+CREATE TABLE Vocabularies (
   id              INT AUTO_INCREMENT PRIMARY KEY,
   deck_id         INT NOT NULL,
   lesson_id       INT NOT NULL,
@@ -48,11 +49,11 @@ CREATE TABLE vocabulary (
   hsk_level       TINYINT NOT NULL,
   created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY (deck_id)   REFERENCES decks(id)   ON DELETE CASCADE,
-  FOREIGN KEY (lesson_id) REFERENCES lessons(id)  ON DELETE CASCADE
+  FOREIGN KEY (deck_id)   REFERENCES Decks(id)   ON DELETE CASCADE,
+  FOREIGN KEY (lesson_id) REFERENCES Lessons(id)  ON DELETE CASCADE
 );
 
-CREATE TABLE user_lessons (
+CREATE TABLE UserLessons (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   user_id      INT NOT NULL,
   lesson_id    INT NOT NULL,
@@ -61,16 +62,16 @@ CREATE TABLE user_lessons (
   completed_at TIMESTAMP NULL,
 
   UNIQUE KEY unique_user_lesson (user_id, lesson_id),
-  FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE,
-  FOREIGN KEY (lesson_id) REFERENCES lessons(id)  ON DELETE CASCADE
+  FOREIGN KEY (user_id)   REFERENCES Users(id)   ON DELETE CASCADE,
+  FOREIGN KEY (lesson_id) REFERENCES Lessons(id)  ON DELETE CASCADE
 );
 
-CREATE TABLE review_sessions (
+CREATE TABLE ReviewSessions (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   user_id      INT NOT NULL,
   vocab_id     INT NOT NULL,
   ease_factor  FLOAT DEFAULT 2.5,
-  interval_day     INT DEFAULT 1,
+  interval_day INT DEFAULT 1,
   repetitions  INT DEFAULT 0,
   next_review  DATE NOT NULL,
   last_rating  TINYINT,
@@ -79,63 +80,57 @@ CREATE TABLE review_sessions (
                ON UPDATE CURRENT_TIMESTAMP,
 
   UNIQUE KEY unique_user_vocab (user_id, vocab_id),
-  FOREIGN KEY (user_id)  REFERENCES users(id)      ON DELETE CASCADE,
-  FOREIGN KEY (vocab_id) REFERENCES vocabulary(id)  ON DELETE CASCADE
+  FOREIGN KEY (user_id)  REFERENCES Users(id)      ON DELETE CASCADE,
+  FOREIGN KEY (vocab_id) REFERENCES Vocabularies(id)  ON DELETE CASCADE
 );
 
-CREATE TABLE notifications (
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  user_id    INT NOT NULL,
-  type       ENUM('review_reminder', 'streak_alert') NOT NULL,
-  sent_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  status     ENUM('sent', 'failed') DEFAULT 'sent',
-
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- Most important query: "what cards are due today for this user?"
+-- Indexes for performance optimization
 CREATE INDEX idx_review_user_date 
-  ON review_sessions(user_id, next_review);
+  ON ReviewSessions(user_id, next_review);
 
--- Getting all vocabulary for a lesson
 CREATE INDEX idx_vocab_lesson 
-  ON vocabulary(lesson_id);
+  ON Vocabularies(lesson_id);
 
--- Getting all vocabulary for a deck
 CREATE INDEX idx_vocab_deck 
-  ON vocabulary(deck_id);
+  ON Vocabularies(deck_id);
 
--- User lookup by email (used on every login)
 CREATE INDEX idx_user_email 
-  ON users(email);
+  ON Users(email);
 
--- Getting all lessons in a deck
 CREATE INDEX idx_lessons_deck 
-  ON lessons(deck_id);
+  ON Lessons(deck_id);
   
-  -- App user: limited privileges, used by your Express app
-CREATE USER 'Veasna'@'localhost' 
+-- Create Roles
+CREATE ROLE IF NOT EXISTS 'app_role';
+CREATE ROLE IF NOT EXISTS 'admin_role';
+
+-- Grant privileges to Roles
+GRANT SELECT, INSERT, UPDATE, DELETE ON HanMemo.* TO 'app_role';
+GRANT ALL PRIVILEGES ON HanMemo.* TO 'admin_role';
+
+-- App user: limited privileges, used by your Express app
+CREATE USER IF NOT EXISTS 'Veasna'@'%' 
   IDENTIFIED BY 'veasna123';
 
-GRANT SELECT, INSERT, UPDATE, DELETE 
-  ON hanmaomo_db.* 
-  TO 'Veasna'@'localhost';
-
 -- Admin user: full privileges, used for maintenance
-CREATE USER 'Eychhean'@'localhost' 
+CREATE USER IF NOT EXISTS 'Eychhean'@'%' 
   IDENTIFIED BY 'Eychhean';
 
-GRANT ALL PRIVILEGES 
-  ON hanmaomo_db.* 
-  TO 'Eychhean'@'localhost';
+-- Grant Roles to Users
+GRANT 'app_role' TO 'Veasna'@'%';
+GRANT 'admin_role' TO 'Eychhean'@'%';
+
+-- Set default roles for users (makes the roles active automatically upon login)
+SET DEFAULT ROLE 'app_role' TO 'Veasna'@'%';
+SET DEFAULT ROLE 'admin_role' TO 'Eychhean'@'%';
 
 FLUSH PRIVILEGES;
 
 -- 1. Get all vocabulary due for review today for a user
 SELECT v.hanzi, v.pinyin, v.definition_en, v.definition_km,
-       rs.ease_factor, rs.interval, rs.next_review
-FROM review_sessions rs
-JOIN vocabulary v ON v.id = rs.vocab_id
+       rs.ease_factor, rs.interval_day, rs.next_review
+FROM ReviewSessions rs
+JOIN Vocabularies v ON v.id = rs.vocab_id
 WHERE rs.user_id = 1
 AND rs.next_review <= CURDATE()
 ORDER BY rs.next_review ASC;
@@ -144,10 +139,10 @@ ORDER BY rs.next_review ASC;
 SELECT l.title, l.lesson_number,
        ul.is_unlocked, ul.is_completed,
        COUNT(v.id) AS total_words
-FROM lessons l
-LEFT JOIN user_lessons ul ON ul.lesson_id = l.id 
+FROM Lessons l
+LEFT JOIN UserLessons ul ON ul.lesson_id = l.id 
   AND ul.user_id = 1
-LEFT JOIN vocabulary v ON v.lesson_id = l.id
+LEFT JOIN Vocabularies v ON v.lesson_id = l.id
 WHERE l.deck_id = 1
 GROUP BY l.id
 ORDER BY l.lesson_number;
@@ -160,15 +155,15 @@ SELECT
     SUM(CASE WHEN last_rating >= 3 THEN 1 ELSE 0 END) 
     / COUNT(*) * 100, 1
   ) AS retention_rate
-FROM review_sessions
+FROM ReviewSessions
 WHERE user_id = 1
 AND last_rating IS NOT NULL;
 
 -- 4. Get words a user struggles with most
 SELECT v.hanzi, v.pinyin, v.definition_en,
        rs.ease_factor, rs.repetitions, rs.last_rating
-FROM review_sessions rs
-JOIN vocabulary v ON v.id = rs.vocab_id
+FROM ReviewSessions rs
+JOIN Vocabularies v ON v.id = rs.vocab_id
 WHERE rs.user_id = 1
 ORDER BY rs.ease_factor ASC
 LIMIT 10;
@@ -177,15 +172,48 @@ LIMIT 10;
 SELECT 
   DATE(updated_at) AS review_date,
   COUNT(*) AS cards_reviewed
-FROM review_sessions
+FROM ReviewSessions
 WHERE user_id = 1
 AND updated_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
 GROUP BY DATE(updated_at)
 ORDER BY review_date DESC;
 
-# backup.sh
-#!/bin/bash
+-- # backup.sh
+-- #!/bin/bash
 -- DATE=$(date +%Y%m%d_%H%M%S)
--- mysqldump -u hanmaomo_admin -p hanmaomo_db \
---   > backups/hanmaomo_backup_$DATE.sql
--- echo "Backup complete: hanmaomo_backup_$DATE.sql"
+-- mysqldump -u HanMemo_admin -p HanMemo \
+--   > backups/HanMemo_backup_$DATE.sql
+-- echo "Backup complete: HanMemo_backup_$DATE.sql"
+
+-- =========================================================================
+-- DATABASE BACKEND AUTOMATION EXPLANATION
+-- =========================================================================
+-- Instead of running the manual backup script above, the HanMemo project
+-- uses a fully automated database backup pipeline:
+--
+-- 1. Automation Trigger (GitHub Actions):
+--    - Defined in `.github/workflows/backup.yml`.
+--    - Configured to run automatically on a daily cron schedule at 00:00 UTC.
+--    - Can be triggered manually at any time via the GitHub Actions dashboard.
+--
+-- 2. Secure Credentials:
+--    - Production database credentials are not hardcoded.
+--    - They are stored securely in GitHub Repository Secrets (Settings -> Secrets)
+--      and injected into the runtime environment as variables.
+--
+-- 3. Execution Script (`backup/backup.py`):
+--    - Runs inside the GitHub Ubuntu runner.
+--    - Calls `mysqldump` with options like `--single-transaction` and `--quick`
+--      to ensure a consistent database snapshot without locking tables or 
+--      causing downtime for the live Express application.
+--    - Compresses the generated `.sql` file into a `.gz` package to save 
+--      up to 80% of storage space and reduce download times.
+--
+-- 4. Artifact Storage:
+--    - The zipped backup is saved as a secure workflow artifact with a
+--      7-day retention limit, ready to be downloaded by team members.
+--
+-- 5. Security & Git Safety:
+--    - The local `backups/` directory is ignored in `.gitignore` so that
+--      local database dumps containing sensitive data are never committed.
+-- =========================================================================
