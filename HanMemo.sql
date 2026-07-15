@@ -53,7 +53,7 @@ CREATE TABLE Vocabularies (
   FOREIGN KEY (lesson_id) REFERENCES Lessons(id)  ON DELETE CASCADE
 );
 
-CREATE TABLE UserLessons (
+CREATE TABLE user_lessons (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   user_id      INT NOT NULL,
   lesson_id    INT NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE UserLessons (
   FOREIGN KEY (lesson_id) REFERENCES Lessons(id)  ON DELETE CASCADE
 );
 
-CREATE TABLE ReviewSessions (
+CREATE TABLE review_sessions (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   user_id      INT NOT NULL,
   vocab_id     INT NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE ReviewSessions (
 
 -- Indexes for performance optimization
 CREATE INDEX idx_review_user_date 
-  ON ReviewSessions(user_id, next_review);
+  ON review_sessions(user_id, next_review);
 
 CREATE INDEX idx_vocab_lesson 
   ON Vocabularies(lesson_id);
@@ -129,7 +129,7 @@ FLUSH PRIVILEGES;
 -- 1. Get all vocabulary due for review today for a user
 SELECT v.hanzi, v.pinyin, v.definition_en, v.definition_km,
        rs.ease_factor, rs.interval_day, rs.next_review
-FROM ReviewSessions rs
+FROM review_sessions rs
 JOIN Vocabularies v ON v.id = rs.vocab_id
 WHERE rs.user_id = 1
 AND rs.next_review <= CURDATE()
@@ -140,7 +140,7 @@ SELECT l.title, l.lesson_number,
        ul.is_unlocked, ul.is_completed,
        COUNT(v.id) AS total_words
 FROM Lessons l
-LEFT JOIN UserLessons ul ON ul.lesson_id = l.id 
+LEFT JOIN user_lessons ul ON ul.lesson_id = l.id 
   AND ul.user_id = 1
 LEFT JOIN Vocabularies v ON v.lesson_id = l.id
 WHERE l.deck_id = 1
@@ -155,14 +155,14 @@ SELECT
     SUM(CASE WHEN last_rating >= 3 THEN 1 ELSE 0 END) 
     / COUNT(*) * 100, 1
   ) AS retention_rate
-FROM ReviewSessions
+FROM review_sessions
 WHERE user_id = 1
 AND last_rating IS NOT NULL;
 
 -- 4. Get words a user struggles with most
 SELECT v.hanzi, v.pinyin, v.definition_en,
        rs.ease_factor, rs.repetitions, rs.last_rating
-FROM ReviewSessions rs
+FROM review_sessions rs
 JOIN Vocabularies v ON v.id = rs.vocab_id
 WHERE rs.user_id = 1
 ORDER BY rs.ease_factor ASC
@@ -172,7 +172,7 @@ LIMIT 10;
 SELECT 
   DATE(updated_at) AS review_date,
   COUNT(*) AS cards_reviewed
-FROM ReviewSessions
+FROM review_sessions
 WHERE user_id = 1
 AND updated_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
 GROUP BY DATE(updated_at)
