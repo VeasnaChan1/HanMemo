@@ -1,5 +1,5 @@
 /**
- * Customized Spaced Repetition Algorithm
+ * Customized Spaced Repetition Algorithm (Anki/Obsidian-style SM-2)
  * Calculates next review date and updates learning parameters
  * @param {Object} currentSession - { repetitions, easeFactor, intervalDays }
  * @param {number} quality - User's rating (1=Again, 2=Hard, 3=Good, 4=Easy)
@@ -12,28 +12,31 @@ export const calculateNextReview = (currentSession, quality) => {
   let intervalDays = currentSession?.intervalDays || 0;
 
   if (quality === 1) { // Again (Forgot)
-    // stay at Due words the same (meaning intervalDays = 0, next_review is TODAY)
     repetitions = 0;
-    intervalDays = 0;
-    easeFactor -= 0.2;
+    intervalDays = 1; // Review tomorrow
+    easeFactor = Math.max(1.3, easeFactor - 0.20);
   } else if (quality === 2) { // Hard (Hesitated)
-    // hard option will repeat the next day
     repetitions = 0;
-    intervalDays = 1;
-    easeFactor -= 0.15;
+    // Hard interval is 1.2x the previous interval (minimum 1 day)
+    intervalDays = Math.ceil((intervalDays === 0 ? 1 : intervalDays) * 1.2);
+    easeFactor = Math.max(1.3, easeFactor - 0.15);
   } else if (quality === 3) { // Good (Correct)
-    // good option will repeat to review 2 days more
     repetitions += 1;
-    intervalDays = 2;
-    // ease factor stays roughly same
-  } else if (quality === 4) { // Easy (Perfect)
-    // easy option will repeat for leaner review again after 3-5 days
-    repetitions += 1;
-    if (repetitions <= 1) {
-      intervalDays = 4; // Between 3-5 days for first successful "Easy"
+    if (repetitions === 1) {
+      intervalDays = 1; // 1st correct: 1 day
+    } else if (repetitions === 2) {
+      intervalDays = 4; // 2nd correct: 4 days (Anki's default graduation interval)
     } else {
-      intervalDays = Math.ceil((intervalDays === 0 ? 1 : intervalDays) * easeFactor);
-      if (intervalDays < 3) intervalDays = 3;
+      intervalDays = Math.ceil(intervalDays * easeFactor);
+    }
+    // Ease factor remains unchanged
+  } else if (quality === 4) { // Easy (Perfect)
+    repetitions += 1;
+    if (repetitions === 1) {
+      intervalDays = 4; // Starting interval for Easy is 4 days
+    } else {
+      // Easy interval is interval * easeFactor * 1.3 (Easy bonus)
+      intervalDays = Math.ceil(intervalDays * easeFactor * 1.3);
     }
     easeFactor += 0.15;
   }
