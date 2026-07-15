@@ -37,9 +37,6 @@ const LandingPage = () => {
       <header className="sticky top-0 z-50 w-full bg-[#FFFDF9]/90 backdrop-blur-md border-b border-[#E8E8F0] px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="w-8 h-8 bg-[#D64A43] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg leading-none">汉</span>
-            </div>
             <div className="font-bold text-2xl text-[#1D1D1F] tracking-tight">
               Han<span className="text-[#D64A43]">Memo</span>
             </div>
@@ -366,9 +363,6 @@ const LandingPage = () => {
       <footer className="w-full bg-[#FFFDF9] border-t border-[#E8E8F0] px-6 py-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#D64A43] rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs leading-none">汉</span>
-            </div>
             <div className="font-bold text-lg text-[#1D1D1F] tracking-tight">
               Han<span className="text-[#D64A43]">Memo</span>
             </div>
