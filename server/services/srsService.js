@@ -11,21 +11,34 @@ export const calculateNextReview = (currentSession, quality) => {
   let easeFactor = currentSession?.easeFactor || 2.5;
   let intervalDays = currentSession?.intervalDays || 0;
 
+  const currentRepetitions = repetitions;
+  const currentIntervalDays = intervalDays;
+
   if (quality === 1) { // Again (Forgot)
     repetitions = 0;
     intervalDays = 1; // Review tomorrow
     easeFactor = Math.max(1.3, easeFactor - 0.20);
   } else if (quality === 2) { // Hard (Hesitated)
     repetitions = 0;
-    // Hard interval is 1.2x the previous interval (minimum 1 day)
-    intervalDays = Math.ceil((intervalDays === 0 ? 1 : intervalDays) * 1.2);
+    if (currentRepetitions === 0) {
+      intervalDays = 1; // Brand new or recently forgotten cards stay at 1 day for Hard
+    } else {
+      // Hard interval is 1.2x the previous interval (minimum 1 day)
+      intervalDays = Math.ceil((currentIntervalDays === 0 ? 1 : currentIntervalDays) * 1.2);
+      
+      // Ensure Hard is strictly less than Good (which would be currentIntervalDays * easeFactor)
+      const goodInterval = Math.ceil(currentIntervalDays * easeFactor);
+      if (intervalDays >= goodInterval && goodInterval > 1) {
+        intervalDays = Math.max(1, goodInterval - 1);
+      }
+    }
     easeFactor = Math.max(1.3, easeFactor - 0.15);
   } else if (quality === 3) { // Good (Correct)
     repetitions += 1;
     if (repetitions === 1) {
-      intervalDays = 1; // 1st correct: 1 day
+      intervalDays = 2; // 1st correct: 2 days (gives a clear distinction from Hard = 1d)
     } else if (repetitions === 2) {
-      intervalDays = 4; // 2nd correct: 4 days (Anki's default graduation interval)
+      intervalDays = 4; // 2nd correct: 4 days
     } else {
       intervalDays = Math.ceil(intervalDays * easeFactor);
     }

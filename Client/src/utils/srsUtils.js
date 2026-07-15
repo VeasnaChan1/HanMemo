@@ -11,11 +11,19 @@ export const calculateNextReviewIntervals = (currentSession) => {
     if (quality === 1) { // Again (Forgot)
       intervalDays = 1;
     } else if (quality === 2) { // Hard (Hesitated)
-      intervalDays = Math.ceil((intervalDays === 0 ? 1 : intervalDays) * 1.2);
+      if (currentRepetitions === 0) {
+        intervalDays = 1;
+      } else {
+        intervalDays = Math.ceil((currentIntervalDays === 0 ? 1 : currentIntervalDays) * 1.2);
+        const goodInterval = Math.ceil(currentIntervalDays * easeFactor);
+        if (intervalDays >= goodInterval && goodInterval > 1) {
+          intervalDays = Math.max(1, goodInterval - 1);
+        }
+      }
     } else if (quality === 3) { // Good (Correct)
       repetitions += 1;
       if (repetitions === 1) {
-        intervalDays = 1;
+        intervalDays = 2; // 1st correct: 2 days (gives a clear distinction from Hard = 1d)
       } else if (repetitions === 2) {
         intervalDays = 4;
       } else {
