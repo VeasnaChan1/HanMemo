@@ -36,6 +36,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "sequelize": "^6.37.8",
+    "serve": "^14.2.6",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
