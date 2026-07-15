@@ -178,6 +178,14 @@ const LandingPage = () => {
           <p className="text-lg text-[#4A4A6A] max-w-2xl mx-auto mb-16">
             We use active recall and spaced repetition to interrupt the forgetting curve. You review words just before your brain is about to forget them.
           </p>
+
+          <div className="w-full max-w-4xl mx-auto mb-16 rounded-3xl overflow-hidden border border-[#E8E8F0] shadow-sm bg-white p-6 animate-fade-in-up">
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/ForgettingCurve.svg/1024px-ForgettingCurve.svg.png" 
+              alt="The Forgetting Curve and Spaced Repetition" 
+              className="w-full h-auto object-contain mix-blend-multiply opacity-90"
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#E8E8F0]">
               <div className="text-2xl font-bold text-[#4D8B6C] mb-2">1. Learn</div>
