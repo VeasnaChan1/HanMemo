@@ -6,7 +6,7 @@ import { authApi } from "../api/authApi";
 
 const LevelSelectionPage = () => {
   const navigate = useNavigate();
-  const { token, user } = useAuth();
+  const { token, user, updateProfile } = useAuth();
   const [selectedLevel, setSelectedLevel] = useState(user?.hsk_level ?? 1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -61,7 +61,7 @@ const LevelSelectionPage = () => {
     setLoading(true);
 
     try {
-      await authApi.updateProfile({ hsk_level: selectedLevel });
+      await updateProfile({ hsk_level: selectedLevel });
       navigate("/dashboard");
     } catch (err) {
       setError(
