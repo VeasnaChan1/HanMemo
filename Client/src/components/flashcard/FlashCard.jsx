@@ -82,9 +82,12 @@ const FlashCard = ({ cardData }) => {
           {/* Bottom Section - Context Sentence Box */}
           {exampleSentence && (
             <div className="border-t border-[#E8E8F0] pt-3 text-left">
-              <span className="text-[11px] text-[#9B9BB4] font-bold uppercase tracking-wider block mb-0.5">
-                Example Context
-              </span>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-[11px] text-[#9B9BB4] font-bold uppercase tracking-wider">
+                  Example Context
+                </span>
+                <AudioButton text={exampleSentence} className="scale-75 origin-right !p-1.5" />
+              </div>
               <p className="text-sm font-semibold text-[#1A1A2E]">
                 {exampleSentence}
               </p>

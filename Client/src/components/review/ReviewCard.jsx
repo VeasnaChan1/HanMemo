@@ -89,9 +89,12 @@ const ReviewCard = ({ reviewData, onScoreSubmitted }) => {
 
           {exampleSentence && (
             <div className="bg-[#FAFAFA] p-2.5 rounded-xl border border-[#E8E8F0]">
-              <span className="text-[10px] text-[#9B9BB4] font-bold uppercase tracking-wider block mb-0.5">
-                Example Usage
-              </span>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-[10px] text-[#9B9BB4] font-bold uppercase tracking-wider">
+                  Example Usage
+                </span>
+                <AudioButton text={exampleSentence} className="scale-75 origin-right !p-1.5" />
+              </div>
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-[#1A1A2E]">
