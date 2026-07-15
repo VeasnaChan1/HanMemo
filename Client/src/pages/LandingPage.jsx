@@ -180,10 +180,10 @@ const LandingPage = () => {
           </p>
 
           <div className="w-full max-w-4xl mx-auto mb-16 rounded-3xl overflow-hidden border border-[#E8E8F0] shadow-sm bg-white p-6 animate-fade-in-up">
-            <img 
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/ForgettingCurve.svg/1024px-ForgettingCurve.svg.png" 
-              alt="The Forgetting Curve and Spaced Repetition" 
-              className="w-full h-auto object-contain mix-blend-multiply opacity-90"
+            <img
+              src="https://cdn.prod.website-files.com/60c39415644232ae43326cc1/63318c360a41c78314d543ec_Heylama%20-%20Spaced%20Repetition.png"
+              alt="The Forgetting Curve and Spaced Repetition"
+              className="w-full h-auto object-contain rounded-2xl"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
