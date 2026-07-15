@@ -46,8 +46,8 @@ export const getAllLessons = async (req, res, next) => {
             const completedWords = ul?.completed_words ?? 0;
 
             let isLocked;
-            if (lesson.lesson_number === 1 || lesson.Deck.hsk_level <= (user.hsk_level || 1)) {
-                // Lesson 1 of any deck, or any lesson in a deck at or below the user's starting level, is unlocked by default
+            if (lesson.lesson_number === 1) {
+                // Lesson 1 of any deck is unlocked by default
                 isLocked = false;
             } else {
                 // Additional lessons unlock according to progression (previous lesson in same deck completed)

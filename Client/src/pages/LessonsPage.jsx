@@ -77,7 +77,19 @@ const LessonsPage = () => {
           
           let isDeckLocked = false;
           const userHskLevel = parseInt(user?.hsk_level || 1, 10);
-          if (level > userHskLevel) {
+          
+          if (level === userHskLevel) {
+            // The user's target starting level is always unlocked
+            isDeckLocked = false;
+          } else if (level < userHskLevel) {
+            // Decks below the target level remain locked because they were skipped,
+            // UNLESS the user actually studied and completed them.
+            if (!allCompleted) {
+              isDeckLocked = true;
+            }
+          } else {
+            // Decks above the target level follow standard progression:
+            // Unlock only if the previous deck is 100% completed.
             const prevDeck = groupedLessons[level - 1];
             if (!prevDeck || prevDeck.length === 0 || !prevDeck.every(l => l.isCompleted)) {
               isDeckLocked = true;
