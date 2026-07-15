@@ -8,7 +8,7 @@ const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="border-b border-[#E8E8F0] py-4">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full justify-between items-center text-left focus:outline-none"
       >
@@ -32,7 +32,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFDF9] font-sans selection:bg-[#F4C95D] selection:text-[#1D1D1F] overflow-x-hidden">
-      
+
       {/* 1. NAVIGATION BAR */}
       <header className="sticky top-0 z-50 w-full bg-[#FFFDF9]/90 backdrop-blur-md border-b border-[#E8E8F0] px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -53,7 +53,7 @@ const LandingPage = () => {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => navigate("/login")}
               className="hidden md:block px-5 py-2.5 text-[15px] font-semibold text-[#1D1D1F] hover:text-[#D64A43] transition-colors"
             >
@@ -80,7 +80,7 @@ const LandingPage = () => {
             Built for Cambodian Learners
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1D1D1F] leading-[1.1] tracking-tight animate-fade-in-up animation-delay-100">
-            Learn Chinese.<br/>
+            Learn Chinese.<br />
             <span className="text-[#D64A43]">Remember it forever.</span>
           </h1>
           <p className="text-lg md:text-xl text-[#4A4A6A] max-w-lg leading-relaxed animate-fade-in-up animation-delay-200">
@@ -106,11 +106,11 @@ const LandingPage = () => {
           <div className="relative mx-auto max-w-lg rounded-[2.5rem] bg-white border border-[#E8E8F0] p-3 shadow-2xl shadow-[#D64A43]/5 rotate-1 hover:rotate-0 transition-transform duration-500 animate-float">
             <div className="rounded-[2rem] overflow-hidden bg-[#FAFAFA] border border-[#F5F5F5]">
               {/* Placeholder for actual app screenshot */}
-              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=800" alt="HanMemo App Interface" className="w-full h-auto object-cover opacity-90 mix-blend-multiply" />
+              <img src="https://i.pinimg.com/736x/1c/15/6c/1c156c577c8f720e3410b54d563b2b2f.jpg" alt="HanMemo App Interface" className="w-full h-auto object-cover rounded-2xl" />
             </div>
-            
+
             {/* Floating Element */}
-            <div className="absolute -left-8 top-1/4 bg-white p-4 rounded-2xl shadow-xl border border-[#E8E8F0] flex items-center gap-3 animate-float" style={{animationDelay: '1s'}}>
+            <div className="absolute -left-8 top-1/4 bg-white p-4 rounded-2xl shadow-xl border border-[#E8E8F0] flex items-center gap-3 animate-float" style={{ animationDelay: '1s' }}>
               <div className="w-10 h-10 bg-[#4D8B6C]/10 rounded-full flex items-center justify-center text-[#4D8B6C]">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
@@ -206,7 +206,7 @@ const LandingPage = () => {
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#1D1D1F] mb-4">Everything you need to master Chinese.</h2>
           <p className="text-lg text-[#4A4A6A]">Designed thoughtfully for an uninterrupted learning experience.</p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-[#E8E8F0] hover:shadow-md transition-shadow">
             <div className="w-14 h-14 bg-[#FFF0EF] text-[#D64A43] rounded-2xl flex items-center justify-center mb-6">
@@ -268,7 +268,7 @@ const LandingPage = () => {
           <div className="flex flex-col md:flex-row gap-8 justify-between relative">
             {/* Connecting Line */}
             <div className="hidden md:block absolute top-12 left-10 right-10 h-0.5 bg-gray-100 -z-10"></div>
-            
+
             {[
               { num: "1", title: "Choose Level", desc: "Select your target HSK level from 1 to 6." },
               { num: "2", title: "Study Cards", desc: "Learn new vocabulary with full context." },
@@ -301,7 +301,7 @@ const LandingPage = () => {
             <div key={idx} className="bg-white p-8 rounded-[2rem] shadow-sm border border-[#E8E8F0] flex flex-col justify-between">
               <div>
                 <div className="flex gap-1 text-[#F4C95D] mb-4">
-                  {[1,2,3,4,5].map(i => <span key={i}>★</span>)}
+                  {[1, 2, 3, 4, 5].map(i => <span key={i}>★</span>)}
                 </div>
                 <p className="text-[#1D1D1F] font-medium leading-relaxed mb-8">"{review.quote}"</p>
               </div>
@@ -340,7 +340,7 @@ const LandingPage = () => {
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#1D1D1F] to-[#2d2d30] z-0"></div>
           <div className="relative z-10">
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
-              Ready to remember every <br/> Chinese word?
+              Ready to remember every <br /> Chinese word?
             </h2>
             <p className="text-[#9B9BB4] text-lg mb-10 max-w-lg mx-auto">
               Join students across Cambodia mastering the Chinese language with smart spaced repetition.
@@ -366,7 +366,7 @@ const LandingPage = () => {
               Han<span className="text-[#D64A43]">Memo</span>
             </div>
           </div>
-          
+
           <div className="flex gap-6 text-sm font-medium text-[#4A4A6A]">
             <a href="#" className="hover:text-[#D64A43] transition-colors">Privacy</a>
             <a href="#" className="hover:text-[#D64A43] transition-colors">Terms</a>
