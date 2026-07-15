@@ -76,7 +76,8 @@ const LessonsPage = () => {
           const allCompleted = deckLessons.every(l => l.isCompleted);
           
           let isDeckLocked = false;
-          if (level > (user?.hsk_level || 1)) {
+          const userHskLevel = parseInt(user?.hsk_level || 1, 10);
+          if (level > userHskLevel) {
             const prevDeck = groupedLessons[level - 1];
             if (!prevDeck || prevDeck.length === 0 || !prevDeck.every(l => l.isCompleted)) {
               isDeckLocked = true;
