@@ -139,8 +139,7 @@ const LandingPage = () => {
             <span className="text-sm font-medium text-[#9B9BB4] mt-1">Native Support</span>
           </div>
           <div className="flex flex-col items-center text-center px-4 justify-center">
-            <img src="https://i.pinimg.com/736x/e6/04/25/e604250b6e4ffd2471bb8e438fff0d3e.jpg" alt="HSK Logo" className="h-10 object-contain" />
-            <span className="text-sm font-medium text-[#9B9BB4] mt-2">Official Standard</span>
+            <img src="https://i.pinimg.com/736x/e6/04/25/e604250b6e4ffd2471bb8e438fff0d3e.jpg" alt="HSK Logo" className="h-16 md:h-20 object-contain" />
           </div>
         </div>
       </section>
